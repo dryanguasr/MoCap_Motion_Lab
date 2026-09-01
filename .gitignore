@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Models downloaded locally
+models/*.task
+
+# Experimental data
+# Keep folder structure but do not version sessions/videos by default.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Generic video exports
+*.mp4
+*.avi
+*.mov
+*.mkv
