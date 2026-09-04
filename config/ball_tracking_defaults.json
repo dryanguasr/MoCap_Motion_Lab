@@ -1,0 +1,10 @@
+{
+  "mass_kg": 0.0027,
+  "radius_m": 0.02,
+  "air_density_kg_m3": 1.225,
+  "drag_coefficient": 0.47,
+  "gravity_m_s2": 9.81,
+  "magnus_enabled": false,
+  "magnus_lift_slope": 1.0,
+  "max_lift_coefficient": 0.6
+}
