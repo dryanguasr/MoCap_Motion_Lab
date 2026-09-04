@@ -17,15 +17,28 @@ Thumbs.db
 # Models downloaded locally
 models/*.task
 
-# Experimental data
-# Keep folder structure but do not version sessions/videos by default.
+# Raw experimental data
+# Keep folder structure but never version source recordings by default.
 data/raw/*
 !data/raw/.gitkeep
-data/processed/*
+
+# Processed experimental data
+# Results can become very large (per-frame CSV/NPZ, overlays, diagnostics, caches,
+# etc.). Keep them local and version only compact human-readable summaries.
+data/processed/**
 !data/processed/.gitkeep
+!data/processed/**/
+!data/processed/**/REPORT.md
+!data/processed/**/summary.json
+!data/processed/**/*_summary.json
+!data/processed/**/*_summary.csv
 
 # Generic video exports
 *.mp4
 *.avi
 *.mov
 *.mkv
+
+# Large/generated numerical artifacts anywhere in the repository
+*.npz
+*.npy
