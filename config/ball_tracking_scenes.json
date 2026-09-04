@@ -1,0 +1,16 @@
+{
+  "20251212_132025_1": {
+    "difficulty": "easy_candidate",
+    "roi_polygon_xy": [[170, 300], [1910, 300], [1910, 760], [120, 760]],
+    "table_polygon_xy": [[565, 520], [1810, 520], [1900, 650], [640, 650]],
+    "pixels_per_m_vertical": 250.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "20251212_140101_1": {
+    "difficulty": "motion_blur_and_occlusion",
+    "roi_polygon_xy": [[250, 280], [1910, 280], [1910, 760], [180, 760]],
+    "table_polygon_xy": [[780, 505], [1760, 505], [1910, 675], [840, 675]],
+    "pixels_per_m_vertical": 250.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  }
+}
