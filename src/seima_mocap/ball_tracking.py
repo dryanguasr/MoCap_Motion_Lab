@@ -260,11 +260,13 @@ def fit_initial_state_world(
     max_iterations: int = 25,
     tolerance: float = 1e-7,
 ) -> StateFitResult:
-    """Robust Gauss-Newton fit from metric 3-D observations.
+    """Robust Gauss-Newton/IRLS fit from metric 3-D observations.
 
     This function is intentionally *not* a monocular pixel-to-3D solver. It is a
     numerical core for calibrated/multiview observations or synthetic tests.
     Monocular data must first be reconciled with camera geometry/constraints.
+    Huber weights are held fixed inside each Gauss-Newton step (IRLS), avoiding
+    derivatives of the robust weighting function from destabilizing the fit.
     """
     if len(observations) < 3:
         raise ValueError("at least three observations are required")
@@ -286,13 +288,17 @@ def fit_initial_state_world(
             local_params = replace(params, drag_coefficient=cd)
         return state, local_params
 
-    def residual(values: Array) -> Array:
+    def errors(values: Array) -> list[Array]:
         state, local_params = decode(values)
+        return [
+            propagate_state(state, observation.timestamp_s, local_params).position_m - observation.position_m
+            for observation in ordered
+        ]
+
+    def residual(values: Array, robust_weights: Array) -> Array:
         pieces = []
-        for observation in ordered:
-            prediction = propagate_state(state, observation.timestamp_s, local_params)
-            error = prediction.position_m - observation.position_m
-            weight = math.sqrt(observation.confidence * _huber_weight(float(np.linalg.norm(error)), huber_delta_m))
+        for observation, error, robust_weight in zip(ordered, errors(values), robust_weights):
+            weight = math.sqrt(observation.confidence * robust_weight)
             pieces.append(weight * error)
         return np.concatenate(pieces)
 
@@ -300,14 +306,19 @@ def fit_initial_state_world(
     converged = False
     iterations = 0
     for iterations in range(1, max_iterations + 1):
-        r = residual(theta)
+        current_errors = errors(theta)
+        robust_weights = np.array([
+            _huber_weight(float(np.linalg.norm(error)), huber_delta_m)
+            for error in current_errors
+        ])
+        r = residual(theta, robust_weights)
         cost = float(r @ r)
         jacobian = np.empty((len(r), len(theta)))
         for j in range(len(theta)):
             step = 1e-5 * max(1.0, abs(theta[j]))
             shifted = theta.copy()
             shifted[j] += step
-            jacobian[:, j] = (residual(shifted) - r) / step
+            jacobian[:, j] = (residual(shifted, robust_weights) - r) / step
         system = jacobian.T @ jacobian + damping * np.eye(len(theta))
         gradient = jacobian.T @ r
         try:
@@ -315,7 +326,7 @@ def fit_initial_state_world(
         except np.linalg.LinAlgError:
             delta = np.linalg.lstsq(system, -gradient, rcond=None)[0]
         candidate = theta + delta
-        new_cost = float(residual(candidate) @ residual(candidate))
+        new_cost = float(residual(candidate, robust_weights) @ residual(candidate, robust_weights))
         if new_cost < cost:
             theta = candidate
             damping = max(damping / 3.0, 1e-9)
@@ -326,9 +337,6 @@ def fit_initial_state_world(
             damping = min(damping * 10.0, 1e9)
 
     fitted_state, fitted_params = decode(theta)
-    errors = []
-    for observation in ordered:
-        prediction = propagate_state(fitted_state, observation.timestamp_s, fitted_params)
-        errors.append(np.linalg.norm(prediction.position_m - observation.position_m) ** 2)
-    rmse = float(math.sqrt(np.mean(errors)))
+    final_errors = errors(theta)
+    rmse = float(math.sqrt(np.mean([np.linalg.norm(error) ** 2 for error in final_errors])))
     return StateFitResult(fitted_state, fitted_params, rmse, iterations, converged)
