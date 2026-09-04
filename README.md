@@ -129,6 +129,31 @@ Se crea una carpeta dentro de `data/processed/` con dos archivos:
 
 Los videos crudos y archivos de datos no se versionan por defecto.
 
+## Pilotos con videos de tenis de mesa
+
+Los flujos experimentales añadidos permiten procesar una pose principal, dos
+jugadores y lotes centrados en el jugador situado a la izquierda:
+
+```powershell
+python scripts/process_training_video.py --help
+python scripts/process_two_player_video.py --help
+python scripts/analyze_left_player_batch.py --help
+```
+
+El piloto de cinética planar reutiliza las poses ya calculadas de seis clips
+cortos y ejecuta escenarios de sensibilidad para fuerzas proyectadas y momentos
+netos de tobillo, rodilla y cadera:
+
+```powershell
+python scripts/estimate_planar_kinetics.py
+```
+
+Consulta [`docs/PROTOCOLO_ADQUISICION_CINETICA.md`](docs/PROTOCOLO_ADQUISICION_CINETICA.md)
+para el protocolo propuesto con cámaras calibradas, plataformas de fuerza y
+antropometría. Los resultados de `data/processed/kinetics_short_clips/` son una
+instantánea exploratoria versionada: **no son mediciones de fuerza ni torques
+anatómicos validados**. Los videos y poses de entrada permanecen excluidos.
+
 ## Parámetros útiles
 
 ```bash

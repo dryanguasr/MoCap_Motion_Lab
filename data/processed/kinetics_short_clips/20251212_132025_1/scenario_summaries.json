@@ -1,0 +1,2492 @@
+[
+  {
+    "assumptions": {
+      "name": "base",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 115,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.137827753663045,
+        "p05": -239.3152067154582,
+        "p95": 156.63547658363558,
+        "min": -313.47156774234764,
+        "max": 249.0997210845284,
+        "p95_abs": 250.56814180859453
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 869.9767333566307,
+        "p05": 524.6675493422101,
+        "p95": 1128.8632119803015,
+        "min": 369.4853850089346,
+        "max": 1364.5559122013565,
+        "p95_abs": 1128.8632119803015
+      },
+      "left_ankle_Nm": {
+        "n": 115,
+        "median": -30.545479681480064,
+        "p05": -50.35222946507825,
+        "p95": -3.4665974568185183,
+        "min": -59.82689875790845,
+        "max": -0.636655240956292,
+        "p95_abs": 50.35222946507825
+      },
+      "left_knee_Nm": {
+        "n": 115,
+        "median": 12.738971119052053,
+        "p05": -42.70071772945858,
+        "p95": 65.64802758677801,
+        "min": -51.172721521034795,
+        "max": 79.12862627730155,
+        "p95_abs": 65.64802758677801
+      },
+      "left_hip_Nm": {
+        "n": 115,
+        "median": -63.023947366529065,
+        "p05": -157.454103222436,
+        "p95": 19.13603231325741,
+        "min": -239.65408238312273,
+        "max": 25.970806036221454,
+        "p95_abs": 157.454103222436
+      },
+      "right_ankle_Nm": {
+        "n": 115,
+        "median": -13.189685615199096,
+        "p05": -40.49403681861045,
+        "p95": 1.6446131625288363,
+        "min": -48.5317878280483,
+        "max": 4.086488574640786,
+        "p95_abs": 40.49403681861043
+      },
+      "right_knee_Nm": {
+        "n": 115,
+        "median": 19.03906827337102,
+        "p05": -28.004890598964884,
+        "p95": 99.78132905881844,
+        "min": -37.33929574462344,
+        "max": 118.81490705355992,
+        "p95_abs": 99.78132905881844
+      },
+      "right_hip_Nm": {
+        "n": 115,
+        "median": -1.8747757855888185,
+        "p05": -143.32866768855502,
+        "p95": 108.8095280732556,
+        "min": -167.12358226191947,
+        "max": 143.24128116159636,
+        "p95_abs": 143.47937603044005
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.911889575096839
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.029338337448154953
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01361533647265895
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.00559744437852696
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 8.430718693583826e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.15363635676996237
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.04197890522808063
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005357567571045562
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.014686060466382484
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.009240732086145679
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00013918139685305847
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.17430794214116063
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.0628031583347743
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005460138868086317
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "body_mass_kg_85",
+      "body_mass_kg": 85.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 115,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -2.9702164537680833,
+        "p05": -226.03019739567756,
+        "p95": 148.00827391538078,
+        "min": -296.04893971766484,
+        "max": 235.1978441378555,
+        "p95_abs": 236.62319422217936
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 821.7460291931886,
+        "p05": 495.63207613033796,
+        "p95": 1066.2389310792412,
+        "min": 349.0025185437922,
+        "max": 1288.8520938375816,
+        "p95_abs": 1066.2389310792412
+      },
+      "left_ankle_Nm": {
+        "n": 115,
+        "median": -28.87995312992864,
+        "p05": -47.56840894187101,
+        "p95": -3.2644598916555894,
+        "min": -56.50954184167181,
+        "max": -0.5995113460044007,
+        "p95_abs": 47.56840894187101
+      },
+      "left_knee_Nm": {
+        "n": 115,
+        "median": 12.05233898066528,
+        "p05": -40.32370764809744,
+        "p95": 62.00133236568718,
+        "min": -48.338876838003856,
+        "max": 74.73795163929843,
+        "p95_abs": 62.00133236568718
+      },
+      "left_hip_Nm": {
+        "n": 115,
+        "median": -59.50533349225404,
+        "p05": -148.7189951489375,
+        "p95": 18.06989894895791,
+        "min": -226.3752547210419,
+        "max": 24.52729228077633,
+        "p95_abs": 148.7189951489375
+      },
+      "right_ankle_Nm": {
+        "n": 115,
+        "median": -12.43371921358665,
+        "p05": -38.24732001135314,
+        "p95": 1.5512869422269318,
+        "min": -45.83886206884979,
+        "max": 3.8589392992085942,
+        "p95_abs": 38.24732001135313
+      },
+      "right_knee_Nm": {
+        "n": 115,
+        "median": 17.947719315486182,
+        "p05": -26.454794917728478,
+        "p95": 94.22140076954194,
+        "min": -35.25511145267964,
+        "max": 112.20321227397615,
+        "p95_abs": 94.22140076954194
+      },
+      "right_hip_Nm": {
+        "n": 115,
+        "median": -1.7497510334995603,
+        "p05": -135.39387241147398,
+        "p95": 102.76323577769465,
+        "min": -157.8549644113495,
+        "max": 135.27740403972464,
+        "p95_abs": 135.51586539738886
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 36.940999999999995,
+        "projected_rod_inertia_kg_m2": 0.8612290431470145
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 5.899,
+        "projected_rod_inertia_kg_m2": 0.027708429812146343
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.3035,
+        "projected_rod_inertia_kg_m2": 0.012858928890844563
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.377,
+        "projected_rod_inertia_kg_m2": 0.005286475246386573
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.5185000000000001,
+        "projected_rod_inertia_kg_m2": 7.962345432829168e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.036,
+        "projected_rod_inertia_kg_m2": 0.14510100361607556
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.6805,
+        "projected_rod_inertia_kg_m2": 0.03964674382652059
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.1645,
+        "projected_rod_inertia_kg_m2": 0.005059924928209697
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.3035,
+        "projected_rod_inertia_kg_m2": 0.013870168218250123
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.377,
+        "projected_rod_inertia_kg_m2": 0.008727358081359809
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.5185000000000001,
+        "projected_rod_inertia_kg_m2": 0.00013144909702788855
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.036,
+        "projected_rod_inertia_kg_m2": 0.16462416757776283
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.6805,
+        "projected_rod_inertia_kg_m2": 0.0593140939828424
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.1645,
+        "projected_rod_inertia_kg_m2": 0.005156797819859299
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "body_mass_kg_95",
+      "body_mass_kg": 95.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 115,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.305439053558012,
+        "p05": -252.60021603523884,
+        "p95": 165.26267925189043,
+        "min": -330.89419576703034,
+        "max": 263.0015980312013,
+        "p95_abs": 264.5130893950097
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 918.2979051637093,
+        "p05": 553.7030225540822,
+        "p95": 1191.4874928813613,
+        "min": 389.9682514740768,
+        "max": 1440.259730565131,
+        "p95_abs": 1191.4874928813613
+      },
+      "left_ankle_Nm": {
+        "n": 115,
+        "median": -32.210986112947054,
+        "p05": -53.13604883106714,
+        "p95": -3.668732540827068,
+        "min": -63.144255724655416,
+        "max": -0.6737991272786787,
+        "p95_abs": 53.13604883106714
+      },
+      "left_knee_Nm": {
+        "n": 115,
+        "median": 13.425614099695157,
+        "p05": -45.07772211074145,
+        "p95": 69.29472359678965,
+        "min": -54.00656546054004,
+        "max": 83.51930049668356,
+        "p95_abs": 69.29472359678965
+      },
+      "left_hip_Nm": {
+        "n": 115,
+        "median": -66.54254865829176,
+        "p05": -166.18919779880736,
+        "p95": 20.202162507413586,
+        "min": -252.93291072309438,
+        "max": 27.41431007037116,
+        "p95_abs": 166.18919779880736
+      },
+      "right_ankle_Nm": {
+        "n": 115,
+        "median": -13.945662688556393,
+        "p05": -42.74075337209565,
+        "p95": 1.7379388922707806,
+        "min": -51.22471359194554,
+        "max": 4.314037947745228,
+        "p95_abs": 42.74075337209563
+      },
+      "right_knee_Nm": {
+        "n": 115,
+        "median": 20.13038482375355,
+        "p05": -29.55385440340369,
+        "p95": 105.34125131495226,
+        "min": -39.423474903298924,
+        "max": 125.42659652793577,
+        "p95_abs": 105.34125131495226
+      },
+      "right_hip_Nm": {
+        "n": 115,
+        "median": -1.9998154915608684,
+        "p05": -151.26346307260428,
+        "p95": 114.85580958471604,
+        "min": -176.39220017171712,
+        "max": 151.20515896176403,
+        "p95_abs": 151.4428871729808
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 41.287,
+        "projected_rod_inertia_kg_m2": 0.9625501070466634
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.593,
+        "projected_rod_inertia_kg_m2": 0.03096824508416356
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.5745,
+        "projected_rod_inertia_kg_m2": 0.014371744054473336
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.539,
+        "projected_rod_inertia_kg_m2": 0.0059084135106673465
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.5795,
+        "projected_rod_inertia_kg_m2": 8.899091954338481e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 13.452,
+        "projected_rod_inertia_kg_m2": 0.1621717099238492
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 4.1135,
+        "projected_rod_inertia_kg_m2": 0.04431106662964066
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.3015,
+        "projected_rod_inertia_kg_m2": 0.005655210213881426
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.5745,
+        "projected_rod_inertia_kg_m2": 0.015501952714514844
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.539,
+        "projected_rod_inertia_kg_m2": 0.00975410609093155
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.5795,
+        "projected_rod_inertia_kg_m2": 0.00014691369667822835
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 13.452,
+        "projected_rod_inertia_kg_m2": 0.18399171670455847
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 4.1135,
+        "projected_rod_inertia_kg_m2": 0.06629222268670622
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.3015,
+        "projected_rod_inertia_kg_m2": 0.0057634799163133335
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "scale_multiplier_0.9",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 0.9,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 122,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -2.8240449782968056,
+        "p05": -215.3836860439124,
+        "p95": 140.9719289252724,
+        "min": -282.12441096811284,
+        "max": 224.1897489760757,
+        "p95_abs": 225.5113276277351
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 871.4456400209674,
+        "p05": 560.6673744079892,
+        "p95": 1104.4434707822716,
+        "min": 421.0034265080415,
+        "max": 1316.5669009812207,
+        "p95_abs": 1104.4434707822716
+      },
+      "left_ankle_Nm": {
+        "n": 122,
+        "median": -27.90322720238153,
+        "p05": -46.06215435512853,
+        "p95": -3.559147102197862,
+        "min": -53.475894581400986,
+        "max": -0.10743931295501945,
+        "p95_abs": 46.06215435512852
+      },
+      "left_knee_Nm": {
+        "n": 122,
+        "median": 13.765412486299546,
+        "p05": -37.24908843833474,
+        "p95": 59.4023178260879,
+        "min": -46.29832405325647,
+        "max": 89.17838327068537,
+        "p95_abs": 59.4023178260879
+      },
+      "left_hip_Nm": {
+        "n": 122,
+        "median": -58.41947188218674,
+        "p05": -138.69094558914733,
+        "p95": 17.10335476072688,
+        "min": -212.1150880713269,
+        "max": 23.420679500413655,
+        "p95_abs": 138.69094558914733
+      },
+      "right_ankle_Nm": {
+        "n": 122,
+        "median": -11.366520979868444,
+        "p05": -34.51581767411485,
+        "p95": 2.453938040319747,
+        "min": -42.844878578296004,
+        "max": 3.53336398094646,
+        "p95_abs": 34.51581767411483
+      },
+      "right_knee_Nm": {
+        "n": 122,
+        "median": 18.202739352537943,
+        "p05": -25.141362897768424,
+        "p95": 87.71857066303141,
+        "min": -33.1510391977427,
+        "max": 103.34273509357578,
+        "p95_abs": 87.71857066303141
+      },
+      "right_hip_Nm": {
+        "n": 122,
+        "median": 0.4453893825229267,
+        "p05": -129.82465609802975,
+        "p95": 96.42288253895552,
+        "min": -148.22347334641438,
+        "max": 129.49784953992042,
+        "p95_abs": 129.86337386426231
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.7386305558284394
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.023764053333005505
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01102842254285376
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.004533929946606838
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 6.828882141802889e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.12444544898366959
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.03400291323474529
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.0043396297325469044
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.011895708977769814
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.007484992989778005
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00011273693145097732
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.1411894331343401
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.05087055825116719
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.0044227124831499225
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "scale_multiplier_1.1",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.1,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 99,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.45161052902917,
+        "p05": -263.246727387004,
+        "p95": 172.2990242419992,
+        "min": -344.8187245165824,
+        "max": 274.00969319298144,
+        "p95_abs": 275.624955989454
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 868.5078266922937,
+        "p05": 488.6677242764305,
+        "p95": 1153.2829531783314,
+        "min": 317.9673435098282,
+        "max": 1412.5449234214914,
+        "p95_abs": 1153.2829531783314
+      },
+      "left_ankle_Nm": {
+        "n": 99,
+        "median": -31.55340028965618,
+        "p05": -56.92166243530205,
+        "p95": -2.9603401860850043,
+        "min": -66.26798994369153,
+        "max": -0.5837239390278319,
+        "p95_abs": 56.921662435302046
+      },
+      "left_knee_Nm": {
+        "n": 99,
+        "median": 15.131981148569363,
+        "p05": -49.30735904197845,
+        "p95": 68.21191284924055,
+        "min": -56.3542334341939,
+        "max": 81.15492637171883,
+        "p95_abs": 68.21191284924055
+      },
+      "left_hip_Nm": {
+        "n": 99,
+        "median": -64.56290977418698,
+        "p05": -178.012147810848,
+        "p95": 24.28152015053251,
+        "min": -267.4910091665911,
+        "max": 28.450939570856203,
+        "p95_abs": 178.01214781084798
+      },
+      "right_ankle_Nm": {
+        "n": 99,
+        "median": -16.682353348500417,
+        "p05": -48.9688322997863,
+        "p95": -0.11796422834157992,
+        "min": -54.40065307328736,
+        "max": 5.062406271852784,
+        "p95_abs": 48.96883229978629
+      },
+      "right_knee_Nm": {
+        "n": 99,
+        "median": 5.986889786186342,
+        "p05": -30.90832512323039,
+        "p95": 113.17742691434012,
+        "min": -41.67454196500794,
+        "max": 135.0526137441861,
+        "p95_abs": 113.17742691434012
+      },
+      "right_hip_Nm": {
+        "n": 99,
+        "median": -6.166693298637345,
+        "p05": -160.5590690510547,
+        "p95": 122.24165289906901,
+        "min": -186.4680412617693,
+        "max": 156.35917493244892,
+        "p95_abs": 160.55906905105462
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 1.1033863858671749
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.035499388312267496
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01647455713191734
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.006772907698017625
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00010201169619236424
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.1858999916916546
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.050794475325977605
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.006482656760965132
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.017770133164322816
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.011181285824236276
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00016840949019220077
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.21091260999080433
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.07599182158507693
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.0066067680303844405
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "smoothing_window_s_0.3",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.3,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 181,
+    "torque_frames": 118,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 181,
+        "median": -3.157596136452088,
+        "p05": -247.74710502965124,
+        "p95": 161.56175053060645,
+        "min": -339.8844163068794,
+        "max": 294.43770186743126,
+        "p95_abs": 269.5488009049011
+      },
+      "total_Fz_N": {
+        "n": 181,
+        "median": 871.1787480494213,
+        "p05": 441.9510564217435,
+        "p95": 1207.6146386085932,
+        "min": 285.61306226370226,
+        "max": 1468.1855975689077,
+        "p95_abs": 1207.6146386085932
+      },
+      "left_ankle_Nm": {
+        "n": 118,
+        "median": -29.58785660789137,
+        "p05": -53.700957666813906,
+        "p95": -1.94268148330513,
+        "min": -70.01519668847487,
+        "max": -0.0938926168279608,
+        "p95_abs": 53.70095766681389
+      },
+      "left_knee_Nm": {
+        "n": 118,
+        "median": 12.43869097419189,
+        "p05": -46.03482211920188,
+        "p95": 71.83082786510529,
+        "min": -53.90175039488829,
+        "max": 116.49775413463826,
+        "p95_abs": 71.83082786510529
+      },
+      "left_hip_Nm": {
+        "n": 118,
+        "median": -67.0113337368879,
+        "p05": -171.99021325580418,
+        "p95": 21.580923328636818,
+        "min": -286.7050678253549,
+        "max": 34.97967901075375,
+        "p95_abs": 171.99021325580415
+      },
+      "right_ankle_Nm": {
+        "n": 118,
+        "median": -13.805725810400514,
+        "p05": -42.04171457957102,
+        "p95": 1.927063639391771,
+        "min": -50.11680823141379,
+        "max": 7.611376279543291,
+        "p95_abs": 42.04171457957101
+      },
+      "right_knee_Nm": {
+        "n": 118,
+        "median": 22.83334686825194,
+        "p05": -28.515247813594264,
+        "p95": 109.29584582437606,
+        "min": -47.42994758312328,
+        "max": 134.06321716437756,
+        "p95_abs": 109.29584582437606
+      },
+      "right_hip_Nm": {
+        "n": 118,
+        "median": -0.6300204874559263,
+        "p05": -145.93775410774134,
+        "p95": 114.34128315956725,
+        "min": -171.77190688218465,
+        "max": 166.4808624681218,
+        "p95_abs": 147.6190618562494
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.911889575096839
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.029338337448154953
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01361533647265895
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.00559744437852696
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 8.430718693583826e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.15363635676996237
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.04197890522808063
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005357567571045562
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.014686060466382484
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.009240732086145679
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00013918139685305847
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.17430794214116063
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.0628031583347743
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005460138868086317
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "smoothing_window_s_0.5",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.5,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 145,
+    "torque_frames": 99,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 145,
+        "median": 4.705923850365611,
+        "p05": -187.7386747793145,
+        "p95": 137.76550018722142,
+        "min": -263.49417471271704,
+        "max": 169.81644314403667,
+        "p95_abs": 187.7386747793144
+      },
+      "total_Fz_N": {
+        "n": 145,
+        "median": 873.0739100297434,
+        "p05": 629.1878493464807,
+        "p95": 1030.6811510710693,
+        "min": 513.1097655650211,
+        "max": 1166.6107030675369,
+        "p95_abs": 1030.6811510710693
+      },
+      "left_ankle_Nm": {
+        "n": 99,
+        "median": -29.414479371901596,
+        "p05": -46.29230176214538,
+        "p95": -3.8722789366228962,
+        "min": -54.14168841176261,
+        "max": -0.18139982717819206,
+        "p95_abs": 46.292301762145364
+      },
+      "left_knee_Nm": {
+        "n": 99,
+        "median": 20.015057293086272,
+        "p05": -43.42161954252799,
+        "p95": 56.40206355242402,
+        "min": -56.06549805234229,
+        "max": 61.84792237674968,
+        "p95_abs": 56.41222935655777
+      },
+      "left_hip_Nm": {
+        "n": 99,
+        "median": -59.123536798482284,
+        "p05": -136.78687581165266,
+        "p95": 19.809984680560543,
+        "min": -150.752641981081,
+        "max": 23.91550041368291,
+        "p95_abs": 136.78687581165266
+      },
+      "right_ankle_Nm": {
+        "n": 99,
+        "median": -14.75376472612887,
+        "p05": -39.102991129458694,
+        "p95": 0.40889023345654185,
+        "min": -46.14802328784929,
+        "max": 2.7009419027599684,
+        "p95_abs": 39.10299112945868
+      },
+      "right_knee_Nm": {
+        "n": 99,
+        "median": 13.562890264414051,
+        "p05": -28.68115002863321,
+        "p95": 79.74849202459039,
+        "min": -30.5243472984726,
+        "max": 93.12944455100661,
+        "p95_abs": 79.74849202459039
+      },
+      "right_hip_Nm": {
+        "n": 99,
+        "median": -3.3225579556732665,
+        "p05": -146.37283541155324,
+        "p95": 92.2906561551294,
+        "min": -157.47340516835538,
+        "max": 107.33637193553136,
+        "p95_abs": 146.3728354115532
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.911889575096839
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.029338337448154953
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01361533647265895
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.00559744437852696
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 8.430718693583826e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.15363635676996237
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.04197890522808063
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005357567571045562
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.014686060466382484
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.009240732086145679
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00013918139685305847
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.17430794214116063
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.0628031583347743
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005460138868086317
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "cop_fraction_heel_to_toe_0.2",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.2,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 83,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.137827753663045,
+        "p05": -239.3152067154582,
+        "p95": 156.63547658363558,
+        "min": -313.47156774234764,
+        "max": 249.0997210845284,
+        "p95_abs": 250.56814180859453
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 869.9767333566307,
+        "p05": 524.6675493422101,
+        "p95": 1128.8632119803015,
+        "min": 369.4853850089346,
+        "max": 1364.5559122013565,
+        "p95_abs": 1128.8632119803015
+      },
+      "left_ankle_Nm": {
+        "n": 83,
+        "median": 6.882356786409594,
+        "p05": -1.3209367405229886,
+        "p95": 18.53085233870807,
+        "min": -2.165371397572585,
+        "max": 25.311253500963048,
+        "p95_abs": 18.53085233870807
+      },
+      "left_knee_Nm": {
+        "n": 83,
+        "median": 35.48691623014187,
+        "p05": -15.234430409913989,
+        "p95": 123.27856351185763,
+        "min": -31.129647055168398,
+        "max": 163.44094266033966,
+        "p95_abs": 123.27856351185763
+      },
+      "left_hip_Nm": {
+        "n": 83,
+        "median": -37.61072729020286,
+        "p05": -136.92074275348548,
+        "p95": 22.992812790049864,
+        "min": -190.51033284055927,
+        "max": 37.923937821221614,
+        "p95_abs": 136.92074275348546
+      },
+      "right_ankle_Nm": {
+        "n": 83,
+        "median": 1.9222087552717908,
+        "p05": -12.416478219380206,
+        "p95": 11.776685898067234,
+        "min": -18.03148071667053,
+        "max": 17.68713207896353,
+        "p95_abs": 14.240730463877258
+      },
+      "right_knee_Nm": {
+        "n": 83,
+        "median": 8.132473659080656,
+        "p05": -30.30391949565483,
+        "p95": 91.20695124847607,
+        "min": -33.33866389086872,
+        "max": 116.72888456359988,
+        "p95_abs": 91.20695124847607
+      },
+      "right_hip_Nm": {
+        "n": 83,
+        "median": 8.263993738865107,
+        "p05": -128.92034067217995,
+        "p95": 101.4273124070231,
+        "min": -151.57853247746652,
+        "max": 127.55203207338167,
+        "p95_abs": 129.88013743296423
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.911889575096839
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.029338337448154953
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01361533647265895
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.00559744437852696
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 8.430718693583826e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.15363635676996237
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.04197890522808063
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005357567571045562
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.014686060466382484
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.009240732086145679
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00013918139685305847
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.17430794214116063
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.0628031583347743
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005460138868086317
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "cop_fraction_heel_to_toe_0.8",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.8,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 118,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.137827753663045,
+        "p05": -239.3152067154582,
+        "p95": 156.63547658363558,
+        "min": -313.47156774234764,
+        "max": 249.0997210845284,
+        "p95_abs": 250.56814180859453
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 869.9767333566307,
+        "p05": 524.6675493422101,
+        "p95": 1128.8632119803015,
+        "min": 369.4853850089346,
+        "max": 1364.5559122013565,
+        "p95_abs": 1128.8632119803015
+      },
+      "left_ankle_Nm": {
+        "n": 118,
+        "median": -49.30891420872415,
+        "p05": -96.27403936453459,
+        "p95": -9.412569217957255,
+        "min": -105.8447890717666,
+        "max": -3.769699632588591,
+        "p95_abs": 96.27403936453456
+      },
+      "left_knee_Nm": {
+        "n": 118,
+        "median": -11.410936710019271,
+        "p05": -74.07824820694366,
+        "p95": 36.368499896120134,
+        "min": -81.0644948654707,
+        "max": 43.85569276179207,
+        "p95_abs": 74.07824820694366
+      },
+      "left_hip_Nm": {
+        "n": 118,
+        "median": -49.11687456266,
+        "p05": -167.03670648512517,
+        "p95": 11.225278447212332,
+        "min": -273.45992544357176,
+        "max": 16.930458640509794,
+        "p95_abs": 167.03670648512514
+      },
+      "right_ankle_Nm": {
+        "n": 118,
+        "median": -37.30788285628649,
+        "p05": -97.98360971961468,
+        "p95": 3.7962961367337535,
+        "min": -121.85115235663051,
+        "max": 10.929151749033444,
+        "p95_abs": 97.98360971961465
+      },
+      "right_knee_Nm": {
+        "n": 118,
+        "median": 25.33864300158291,
+        "p05": -48.625174297650695,
+        "p95": 95.60415790869659,
+        "min": -60.79290534722551,
+        "max": 130.8869439703926,
+        "p95_abs": 95.60415790869659
+      },
+      "right_hip_Nm": {
+        "n": 118,
+        "median": -9.067812759164028,
+        "p05": -136.84290683301336,
+        "p95": 106.17127573262111,
+        "min": -170.69868382062847,
+        "max": 177.03276847549395,
+        "p95_abs": 146.2760216173227
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.911889575096839
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.029338337448154953
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01361533647265895
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.00559744437852696
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 8.430718693583826e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.15363635676996237
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.04197890522808063
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005357567571045562
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.014686060466382484
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.009240732086145679
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00013918139685305847
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.17430794214116063
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.0628031583347743
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005460138868086317
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "friction_coefficient_0.5",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.5,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 115,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.137827753663045,
+        "p05": -239.3152067154582,
+        "p95": 156.63547658363558,
+        "min": -313.47156774234764,
+        "max": 249.0997210845284,
+        "p95_abs": 250.56814180859453
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 869.9767333566307,
+        "p05": 524.6675493422101,
+        "p95": 1128.8632119803015,
+        "min": 369.4853850089346,
+        "max": 1364.5559122013565,
+        "p95_abs": 1128.8632119803015
+      },
+      "left_ankle_Nm": {
+        "n": 115,
+        "median": -30.545479681480064,
+        "p05": -50.35222946507825,
+        "p95": -3.4665974568185183,
+        "min": -59.82689875790845,
+        "max": -0.636655240956292,
+        "p95_abs": 50.35222946507825
+      },
+      "left_knee_Nm": {
+        "n": 115,
+        "median": 12.738971119052053,
+        "p05": -42.70071772945858,
+        "p95": 65.64802758677801,
+        "min": -51.172721521034795,
+        "max": 79.12862627730155,
+        "p95_abs": 65.64802758677801
+      },
+      "left_hip_Nm": {
+        "n": 115,
+        "median": -63.023947366529065,
+        "p05": -157.454103222436,
+        "p95": 19.13603231325741,
+        "min": -239.65408238312273,
+        "max": 25.970806036221454,
+        "p95_abs": 157.454103222436
+      },
+      "right_ankle_Nm": {
+        "n": 115,
+        "median": -13.189685615199096,
+        "p05": -40.49403681861045,
+        "p95": 1.6446131625288363,
+        "min": -48.5317878280483,
+        "max": 4.086488574640786,
+        "p95_abs": 40.49403681861043
+      },
+      "right_knee_Nm": {
+        "n": 115,
+        "median": 19.03906827337102,
+        "p05": -28.004890598964884,
+        "p95": 99.78132905881844,
+        "min": -37.33929574462344,
+        "max": 118.81490705355992,
+        "p95_abs": 99.78132905881844
+      },
+      "right_hip_Nm": {
+        "n": 115,
+        "median": -1.8747757855888185,
+        "p05": -143.32866768855502,
+        "p95": 108.8095280732556,
+        "min": -167.12358226191947,
+        "max": 143.24128116159636,
+        "p95_abs": 143.47937603044005
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.911889575096839
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.029338337448154953
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01361533647265895
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.00559744437852696
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 8.430718693583826e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.15363635676996237
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.04197890522808063
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005357567571045562
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.014686060466382484
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.009240732086145679
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00013918139685305847
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.17430794214116063
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.0628031583347743
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005460138868086317
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "friction_coefficient_0.9",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.9,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 115,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.137827753663045,
+        "p05": -239.3152067154582,
+        "p95": 156.63547658363558,
+        "min": -313.47156774234764,
+        "max": 249.0997210845284,
+        "p95_abs": 250.56814180859453
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 869.9767333566307,
+        "p05": 524.6675493422101,
+        "p95": 1128.8632119803015,
+        "min": 369.4853850089346,
+        "max": 1364.5559122013565,
+        "p95_abs": 1128.8632119803015
+      },
+      "left_ankle_Nm": {
+        "n": 115,
+        "median": -30.545479681480064,
+        "p05": -50.35222946507825,
+        "p95": -3.4665974568185183,
+        "min": -59.82689875790845,
+        "max": -0.636655240956292,
+        "p95_abs": 50.35222946507825
+      },
+      "left_knee_Nm": {
+        "n": 115,
+        "median": 12.738971119052053,
+        "p05": -42.70071772945858,
+        "p95": 65.64802758677801,
+        "min": -51.172721521034795,
+        "max": 79.12862627730155,
+        "p95_abs": 65.64802758677801
+      },
+      "left_hip_Nm": {
+        "n": 115,
+        "median": -63.023947366529065,
+        "p05": -157.454103222436,
+        "p95": 19.13603231325741,
+        "min": -239.65408238312273,
+        "max": 25.970806036221454,
+        "p95_abs": 157.454103222436
+      },
+      "right_ankle_Nm": {
+        "n": 115,
+        "median": -13.189685615199096,
+        "p05": -40.49403681861045,
+        "p95": 1.6446131625288363,
+        "min": -48.5317878280483,
+        "max": 4.086488574640786,
+        "p95_abs": 40.49403681861043
+      },
+      "right_knee_Nm": {
+        "n": 115,
+        "median": 19.03906827337102,
+        "p05": -28.004890598964884,
+        "p95": 99.78132905881844,
+        "min": -37.33929574462344,
+        "max": 118.81490705355992,
+        "p95_abs": 99.78132905881844
+      },
+      "right_hip_Nm": {
+        "n": 115,
+        "median": -1.8747757855888185,
+        "p05": -143.32866768855502,
+        "p95": 108.8095280732556,
+        "min": -167.12358226191947,
+        "max": 143.24128116159636,
+        "p95_abs": 143.47937603044005
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.911889575096839
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.029338337448154953
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01361533647265895
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.00559744437852696
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 8.430718693583826e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.15363635676996237
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.04197890522808063
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005357567571045562
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.014686060466382484
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.009240732086145679
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00013918139685305847
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.17430794214116063
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.0628031583347743
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.005460138868086317
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "limb_mass_multiplier_0.9",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 0.9,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 115,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.125146359668046,
+        "p05": -236.4463138217403,
+        "p95": 158.54249242692305,
+        "min": -310.18710260241045,
+        "max": 243.97055833228134,
+        "p95_abs": 246.83998496204123
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 870.4454439431563,
+        "p05": 519.9367599357606,
+        "p95": 1130.1619999073275,
+        "min": 367.78840008180646,
+        "max": 1369.4151359337236,
+        "p95_abs": 1130.1619999073275
+      },
+      "left_ankle_Nm": {
+        "n": 115,
+        "median": -30.613505827419413,
+        "p05": -50.37031067830468,
+        "p95": -3.078521616459052,
+        "min": -60.11759834196096,
+        "max": -0.45206195023906987,
+        "p95_abs": 50.37031067830468
+      },
+      "left_knee_Nm": {
+        "n": 115,
+        "median": 12.349310086442575,
+        "p05": -42.71651274751947,
+        "p95": 65.74829392673914,
+        "min": -51.28595668187158,
+        "max": 78.85154157116276,
+        "p95_abs": 65.74829392673914
+      },
+      "left_hip_Nm": {
+        "n": 115,
+        "median": -65.22233852508091,
+        "p05": -158.7350712764764,
+        "p95": 18.827938898922575,
+        "min": -240.94071760375763,
+        "max": 25.742737910791668,
+        "p95_abs": 158.7350712764764
+      },
+      "right_ankle_Nm": {
+        "n": 115,
+        "median": -12.998025969879334,
+        "p05": -40.61062935644287,
+        "p95": 1.6543724237799295,
+        "min": -49.12070007171066,
+        "max": 3.90132082658138,
+        "p95_abs": 40.61062935644286
+      },
+      "right_knee_Nm": {
+        "n": 115,
+        "median": 19.005669546642558,
+        "p05": -28.01792781239406,
+        "p95": 100.09332193202933,
+        "min": -38.08691508521419,
+        "max": 119.55531904184747,
+        "p95_abs": 100.09332193202933
+      },
+      "right_hip_Nm": {
+        "n": 115,
+        "median": -2.0928104980845497,
+        "p05": -146.55048221702918,
+        "p95": 108.9413775971215,
+        "min": -170.1565115869713,
+        "max": 141.9426658486418,
+        "p95_abs": 146.55048221702918
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 41.15530303030303,
+        "projected_rod_inertia_kg_m2": 0.9594797717769771
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.571969696969698,
+        "projected_rod_inertia_kg_m2": 0.03086946280319335
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.3096590909090913,
+        "projected_rod_inertia_kg_m2": 0.01289331105365431
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.3806818181818183,
+        "projected_rod_inertia_kg_m2": 0.005300610206938409
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.5198863636363636,
+        "projected_rod_inertia_kg_m2": 7.983635126499834e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.068181818181818,
+        "projected_rod_inertia_kg_m2": 0.14548897421397952
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.690340909090909,
+        "projected_rod_inertia_kg_m2": 0.039752751162955145
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.1676136363636367,
+        "projected_rod_inertia_kg_m2": 0.005073454139247692
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.3096590909090913,
+        "projected_rod_inertia_kg_m2": 0.013907254229528869
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.3806818181818183,
+        "projected_rod_inertia_kg_m2": 0.008750693263395531
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.5198863636363636,
+        "projected_rod_inertia_kg_m2": 0.00013180056520175988
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.068181818181818,
+        "projected_rod_inertia_kg_m2": 0.16506433914882637
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.690340909090909,
+        "projected_rod_inertia_kg_m2": 0.05947268781702112
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.1676136363636367,
+        "projected_rod_inertia_kg_m2": 0.005170586049324164
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "limb_mass_multiplier_1.1",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.1,
+      "inertia_multiplier": 1.0
+    },
+    "total_force_frames": 169,
+    "torque_frames": 116,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -2.852726969083633,
+        "p05": -241.91295424422114,
+        "p95": 154.90869699382966,
+        "min": -316.4456108721079,
+        "max": 253.74411540592288,
+        "p95_abs": 253.94394236782122
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 869.5523216365141,
+        "p05": 528.951221457196,
+        "p95": 1127.6871753512562,
+        "min": 371.0219841655104,
+        "max": 1360.1559443705237,
+        "p95_abs": 1127.6871753512562
+      },
+      "left_ankle_Nm": {
+        "n": 116,
+        "median": -30.238333797931276,
+        "p05": -50.32598582757993,
+        "p95": -3.381408918318294,
+        "min": -59.563538730924236,
+        "max": -0.13102359626254056,
+        "p95_abs": 50.32598582757993
+      },
+      "left_knee_Nm": {
+        "n": 116,
+        "median": 12.972908516554403,
+        "p05": -42.918876198957115,
+        "p95": 65.29734689829272,
+        "min": -51.06767271126997,
+        "max": 79.37731220039876,
+        "p95_abs": 65.29734689829272
+      },
+      "left_hip_Nm": {
+        "n": 116,
+        "median": -60.49243800455305,
+        "p05": -156.26196115010276,
+        "p95": 19.256040042679338,
+        "min": -238.49329095878124,
+        "max": 26.17707678623415,
+        "p95_abs": 156.26196115010276
+      },
+      "right_ankle_Nm": {
+        "n": 116,
+        "median": -13.285695466865064,
+        "p05": -40.1266843784653,
+        "p95": 1.6609732749259192,
+        "min": -47.9971944871832,
+        "max": 4.254766777584387,
+        "p95_abs": 40.1266843784653
+      },
+      "right_knee_Nm": {
+        "n": 116,
+        "median": 17.818027451404227,
+        "p05": -27.988520332193158,
+        "p95": 99.399556589581,
+        "min": -37.10753057582517,
+        "max": 118.1444563690974,
+        "p95_abs": 99.399556589581
+      },
+      "right_hip_Nm": {
+        "n": 116,
+        "median": -1.9452459568729417,
+        "p05": -141.98025959889998,
+        "p95": 108.64600293215241,
+        "min": -164.360404762768,
+        "max": 144.42140510150853,
+        "p95_abs": 143.84643406779924
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 37.265625,
+        "projected_rod_inertia_kg_m2": 0.8687972323712262
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 5.9508384146341475,
+        "projected_rod_inertia_kg_m2": 0.027951922111428124
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.556116615853659,
+        "projected_rod_inertia_kg_m2": 0.014269121684379618
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.5280106707317074,
+        "projected_rod_inertia_kg_m2": 0.005866224100971471
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.575362042682927,
+        "projected_rod_inertia_kg_m2": 8.835547411339759e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 13.355945121951223,
+        "projected_rod_inertia_kg_m2": 0.16101371231608105
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 4.084127286585366,
+        "projected_rod_inertia_kg_m2": 0.04399466058583145
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.292206554878049,
+        "projected_rod_inertia_kg_m2": 0.005614828818740585
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.556116615853659,
+        "projected_rod_inertia_kg_m2": 0.015391260016216402
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.5280106707317074,
+        "projected_rod_inertia_kg_m2": 0.009684456264062736
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.575362042682927,
+        "projected_rod_inertia_kg_m2": 0.00014586464990316725
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 13.355945121951223,
+        "projected_rod_inertia_kg_m2": 0.1826779119238536
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 4.084127286585366,
+        "projected_rod_inertia_kg_m2": 0.0658188587731057
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.292206554878049,
+        "projected_rod_inertia_kg_m2": 0.00572232541434351
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "inertia_multiplier_0.8",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 0.8
+    },
+    "total_force_frames": 169,
+    "torque_frames": 115,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.137827753663045,
+        "p05": -239.3152067154582,
+        "p95": 156.63547658363558,
+        "min": -313.47156774234764,
+        "max": 249.0997210845284,
+        "p95_abs": 250.56814180859453
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 869.9767333566307,
+        "p05": 524.6675493422101,
+        "p95": 1128.8632119803015,
+        "min": 369.4853850089346,
+        "max": 1364.5559122013565,
+        "p95_abs": 1128.8632119803015
+      },
+      "left_ankle_Nm": {
+        "n": 115,
+        "median": -30.21307338149604,
+        "p05": -50.37057545264382,
+        "p95": -3.5657361166655677,
+        "min": -59.98468532838183,
+        "max": -0.6311196046963385,
+        "p95_abs": 50.37057545264382
+      },
+      "left_knee_Nm": {
+        "n": 115,
+        "median": 12.764185598391887,
+        "p05": -42.70324006731317,
+        "p95": 65.54890056507196,
+        "min": -50.99469445309869,
+        "max": 79.23122195057076,
+        "p95_abs": 65.54890056507196
+      },
+      "left_hip_Nm": {
+        "n": 115,
+        "median": -63.013324476153784,
+        "p05": -157.11864707639182,
+        "p95": 19.041240149825374,
+        "min": -238.60536642221638,
+        "max": 25.786672764241658,
+        "p95_abs": 157.11864707639182
+      },
+      "right_ankle_Nm": {
+        "n": 115,
+        "median": -13.355771780238802,
+        "p05": -40.479253468267125,
+        "p95": 1.6091129917699114,
+        "min": -48.4175888502301,
+        "max": 4.072249131889931,
+        "p95_abs": 40.47925346826711
+      },
+      "right_knee_Nm": {
+        "n": 115,
+        "median": 19.141748082903387,
+        "p05": -27.947023872241232,
+        "p95": 99.86111808748522,
+        "min": -37.20626623497228,
+        "max": 118.70244335484753,
+        "p95_abs": 99.86111808748522
+      },
+      "right_hip_Nm": {
+        "n": 115,
+        "median": -2.00571293354043,
+        "p05": -143.15381660785025,
+        "p95": 108.67287637379276,
+        "min": -166.70570561650192,
+        "max": 142.11216044096983,
+        "p95_abs": 143.15381660785022
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 0.7295116600774713
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.023470669958523965
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.010892269178127162
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.004477955502821568
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 6.744574954867061e-05
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.1229090854159699
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.0335831241824645
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.00428605405683645
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.011748848373105988
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.007392585668916544
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00011134511748244678
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.13944635371292852
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.05024252666781945
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.004368111094469054
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  },
+  {
+    "assumptions": {
+      "name": "inertia_multiplier_1.2",
+      "body_mass_kg": 90.0,
+      "racket_mass_kg": 0.18,
+      "scale_multiplier": 1.0,
+      "smoothing_window_s": 0.4,
+      "cop_fraction_heel_to_toe": 0.5,
+      "friction_coefficient": 0.7,
+      "limb_mass_multiplier": 1.0,
+      "inertia_multiplier": 1.2
+    },
+    "total_force_frames": 169,
+    "torque_frames": 115,
+    "metrics": {
+      "total_Fx_N": {
+        "n": 169,
+        "median": -3.137827753663045,
+        "p05": -239.3152067154582,
+        "p95": 156.63547658363558,
+        "min": -313.47156774234764,
+        "max": 249.0997210845284,
+        "p95_abs": 250.56814180859453
+      },
+      "total_Fz_N": {
+        "n": 169,
+        "median": 869.9767333566307,
+        "p05": 524.6675493422101,
+        "p95": 1128.8632119803015,
+        "min": 369.4853850089346,
+        "max": 1364.5559122013565,
+        "p95_abs": 1128.8632119803015
+      },
+      "left_ankle_Nm": {
+        "n": 115,
+        "median": -30.877885981464075,
+        "p05": -50.314527455869985,
+        "p95": -3.3674587969714684,
+        "min": -59.6691121874351,
+        "max": -0.6421908772162457,
+        "p95_abs": 50.314527455869985
+      },
+      "left_knee_Nm": {
+        "n": 115,
+        "median": 12.713756639712233,
+        "p05": -42.72624276315944,
+        "p95": 65.74715460848405,
+        "min": -51.350748588970916,
+        "max": 79.02603060403234,
+        "p95_abs": 65.74715460848405
+      },
+      "left_hip_Nm": {
+        "n": 115,
+        "median": -63.03457025690433,
+        "p05": -157.78955936848018,
+        "p95": 19.230824476689452,
+        "min": -240.70279834402902,
+        "max": 26.15493930820125,
+        "p95_abs": 157.78955936848018
+      },
+      "right_ankle_Nm": {
+        "n": 115,
+        "median": -13.023599450159399,
+        "p05": -40.50882016895377,
+        "p95": 1.6801133332877598,
+        "min": -48.6459868058665,
+        "max": 4.10072801739164,
+        "p95_abs": 40.508820168953754
+      },
+      "right_knee_Nm": {
+        "n": 115,
+        "median": 18.63985344085357,
+        "p05": -28.05112091918925,
+        "p95": 99.70154003015166,
+        "min": -37.48769422237228,
+        "max": 118.92737075227231,
+        "p95_abs": 99.70154003015166
+      },
+      "right_hip_Nm": {
+        "n": 115,
+        "median": -1.5954583862172846,
+        "p05": -143.644487623984,
+        "p95": 108.94617977271844,
+        "min": -167.54145890733702,
+        "max": 144.37040188222292,
+        "p95_abs": 144.16153565853082
+      }
+    },
+    "segments": [
+      {
+        "name": "trunk",
+        "mass_kg": 39.114,
+        "projected_rod_inertia_kg_m2": 1.0942674901162068
+      },
+      {
+        "name": "head_neck",
+        "mass_kg": 6.246,
+        "projected_rod_inertia_kg_m2": 0.035206004937785945
+      },
+      {
+        "name": "left_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01633840376719074
+      },
+      {
+        "name": "left_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.006716933254232352
+      },
+      {
+        "name": "left_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00010116862432300591
+      },
+      {
+        "name": "left_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.18436362812395485
+      },
+      {
+        "name": "left_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.050374686273696755
+      },
+      {
+        "name": "left_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.0064290810852546745
+      },
+      {
+        "name": "right_upper_arm",
+        "mass_kg": 2.439,
+        "projected_rod_inertia_kg_m2": 0.01762327255965898
+      },
+      {
+        "name": "right_forearm",
+        "mass_kg": 1.458,
+        "projected_rod_inertia_kg_m2": 0.011088878503374814
+      },
+      {
+        "name": "right_hand",
+        "mass_kg": 0.549,
+        "projected_rod_inertia_kg_m2": 0.00016701767622367015
+      },
+      {
+        "name": "right_thigh",
+        "mass_kg": 12.744,
+        "projected_rod_inertia_kg_m2": 0.20916953056939275
+      },
+      {
+        "name": "right_shank",
+        "mass_kg": 3.897,
+        "projected_rod_inertia_kg_m2": 0.07536379000172916
+      },
+      {
+        "name": "right_foot",
+        "mass_kg": 1.233,
+        "projected_rod_inertia_kg_m2": 0.00655216664170358
+      },
+      {
+        "name": "racket_point_at_right_wrist",
+        "mass_kg": 0.18,
+        "projected_rod_inertia_kg_m2": 0.0
+      }
+    ]
+  }
+]
