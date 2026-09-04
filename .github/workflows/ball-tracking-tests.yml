@@ -7,8 +7,16 @@ on:
   pull_request:
     paths:
       - "src/seima_mocap/ball_tracking.py"
-      - "tests/test_ball_tracking.py"
-      - "config/ball_tracking_defaults.json"
+      - "src/seima_mocap/ball_detection.py"
+      - "src/seima_mocap/ball_video_tracking.py"
+      - "src/seima_mocap/interaction_tracking.py"
+      - "src/seima_mocap/racketvision_adapter.py"
+      - "src/seima_mocap/pose_context.py"
+      - "tests/test_ball*.py"
+      - "tests/test_interaction_tracking.py"
+      - "tests/test_racketvision_adapter.py"
+      - "tests/test_pose_context.py"
+      - "config/ball_*.json"
       - "scripts/validate_ball_tracking_synthetic.py"
       - ".github/workflows/ball-tracking-tests.yml"
 
@@ -26,6 +34,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
       - name: Run ball tracking tests
-        run: pytest tests/test_ball_tracking.py -q
+        run: pytest tests/test_ball_tracking.py tests/test_ball_detection.py tests/test_ball_video_tracking.py tests/test_interaction_tracking.py tests/test_racketvision_adapter.py tests/test_pose_context.py -q
       - name: Run synthetic smoke test
         run: python scripts/validate_ball_tracking_synthetic.py

@@ -1,12 +1,13 @@
 """Detect and track a table-tennis ball in one or two short real clips.
 
-The diagnostic video and frame CSV remain local. Compact summary.json and
-REPORT.md are eligible for versioning, but this script never commits them.
+The diagnostic videos and frame CSVs remain local. Compact summaries and the
+report are eligible for versioning, but this script never commits them.
 """
 from __future__ import annotations
 
 import argparse
 import csv
+from dataclasses import replace
 import json
 import math
 from pathlib import Path
@@ -23,6 +24,15 @@ from seima_mocap.ball_detection import BallDetectorConfig, detect_ball_candidate
 from seima_mocap.ball_tracking import (BallPhysicalParams, BallState, WorldBallObservation,
                                        fit_initial_state_world, predict_trajectory, propagate_state)
 from seima_mocap.ball_video_tracking import PlanarSceneCalibration, ProjectedBallTracker, TrackStatus
+from seima_mocap.interaction_tracking import (
+    InteractionAwareBallTracker, InteractionContext, InteractionMode, TwoRacketTracker,
+    interaction_metrics, smooth_event_gaps,
+)
+from seima_mocap.landmarks import POSE_CONNECTIONS
+from seima_mocap.output_layout import artifact_path, ensure_output_layout
+from seima_mocap.pose_context import load_body_frames
+from seima_mocap.racketvision_adapter import RacketVisionFrame, load_cache
+from seima_mocap.table_geometry import annotation_path as table_annotation_path, load_table_geometry
 
 DEFAULT_CLIPS = ("20251212_132025_1", "20251212_140101_1")
 STATUS_COLORS = {TrackStatus.OBSERVED: (80, 230, 80), TrackStatus.PREDICTED: (0, 165, 255),
@@ -48,9 +58,9 @@ def video_timestamps(path: Path) -> tuple[np.ndarray, str]:
 
 
 def load_wrist(stem: str, timestamps: np.ndarray, width: int, height: int):
-    directory = ROOT / "data/processed/left_player_batch" / stem
-    cache = directory / "pose_landmarks.npz"
-    metrics = directory / "frame_metrics.csv"
+    output_root = ROOT / "data/processed"
+    cache = artifact_path(output_root, "arrays", stem, "left_player", "pose_landmarks", ".npz")
+    metrics = artifact_path(output_root, "metrics", stem, "left_player", "frame_metrics", ".csv")
     result = {"xy": np.full((len(timestamps), 2), np.nan), "quality": np.zeros(len(timestamps)),
               "wrist_speed_px_s": np.full(len(timestamps), np.nan),
               "elbow_angle_deg": np.full(len(timestamps), np.nan),
@@ -81,7 +91,7 @@ def load_wrist(stem: str, timestamps: np.ndarray, width: int, height: int):
     return result
 
 
-def frame_record(index, timestamp, candidates, isolated, temporal, physical):
+def frame_record(index, timestamp, candidates, isolated, temporal, physical, multimodal=None, context=None):
     record = {"frame": index, "timestamp_s": timestamp, "candidate_count": len(candidates),
               "isolated_detected": isolated is not None}
     if isolated is not None:
@@ -95,11 +105,60 @@ def frame_record(index, timestamp, candidates, isolated, temporal, physical):
         for kind, point in (("observed", tracked.observed_xy), ("predicted", tracked.predicted_xy)):
             record[f"{name}_{kind}_x_px"] = "" if point is None else point[0]
             record[f"{name}_{kind}_y_px"] = "" if point is None else point[1]
+    if multimodal is not None:
+        tracked = multimodal.track
+        record.update({
+            "multimodal_status": tracked.status.value,
+            "multimodal_confidence": tracked.confidence,
+            "multimodal_missed_frames": tracked.missed_frames,
+            "interaction_mode": multimodal.mode.value,
+            "candidate_sources": json.dumps(multimodal.candidate_count_by_source, sort_keys=True),
+            "alternative_hypotheses": json.dumps(multimodal.alternatives, ensure_ascii=False),
+            "selected_candidate_source": "" if tracked.selected_candidate is None else tracked.selected_candidate.observation.source,
+            "selected_visual_evidence": "" if tracked.selected_candidate is None else tracked.selected_candidate.reason_scores.get("visual_evidence", ""),
+            "selected_dynamic_evidence": "" if tracked.selected_candidate is None else tracked.selected_candidate.reason_scores.get("dynamic_evidence", ""),
+            "selected_body_suppression_factor": "" if tracked.selected_candidate is None else tracked.selected_candidate.reason_scores.get("body_suppression_factor", ""),
+            "selected_interaction_evidence": "" if tracked.selected_candidate is None else tracked.selected_candidate.reason_scores.get("interaction_evidence", ""),
+        })
+        for kind, point in (("observed", tracked.observed_xy), ("predicted", tracked.predicted_xy)):
+            record[f"multimodal_{kind}_x_px"] = "" if point is None else point[0]
+            record[f"multimodal_{kind}_y_px"] = "" if point is None else point[1]
+        metrics = {metric.player_id: metric for metric in multimodal.interaction_metrics}
+        for player in ("left", "right"):
+            metric = metrics.get(player)
+            record[f"{player}_ball_racket_distance_px"] = "" if metric is None else metric.distance_px
+            record[f"{player}_closing_speed_px_s"] = "" if metric is None else metric.closing_speed_px_s
+            record[f"{player}_time_to_closest_s"] = "" if metric is None or metric.time_to_closest_s is None else metric.time_to_closest_s
+            record[f"{player}_swept_racket_intersection"] = False if metric is None else metric.swept_intersection
+    if context is not None:
+        for player in ("left", "right"):
+            body = context.bodies.get(player)
+            racket = context.rackets.get(player)
+            wrist = None if body is None else body.right_wrist_xy
+            record[f"{player}_right_wrist_x_px"] = "" if wrist is None else wrist[0]
+            record[f"{player}_right_wrist_y_px"] = "" if wrist is None else wrist[1]
+            record[f"{player}_body_confidence"] = 0 if body is None else body.confidence
+            record[f"{player}_racket_status"] = TrackStatus.LOST.value if racket is None else racket.status.value
+            record[f"{player}_racket_confidence"] = 0 if racket is None else racket.confidence
+            record[f"{player}_racket_source"] = "" if racket is None or racket.pose is None else racket.pose.source
+            if racket is not None and racket.pose is not None:
+                for point_index, point_name in enumerate(("top", "bottom", "handle", "left", "right")):
+                    point = racket.pose.keypoints_xy[point_index]
+                    record[f"{player}_racket_{point_name}_x_px"] = point[0]
+                    record[f"{player}_racket_{point_name}_y_px"] = point[1]
     return record
 
 
-def draw_overlay(frame, candidates, tracked, trail, scene, events_now):
-    cv2.polylines(frame, [np.round(scene.table_polygon_xy).astype(np.int32)], True, (210, 160, 40), 2)
+def draw_overlay(frame, candidates, tracked, trail, scene, events_now, multimodal=None, context=None):
+    table_points = np.round(scene.table_polygon_xy).astype(np.int32)
+    table_layer = frame.copy()
+    cv2.fillPoly(table_layer, [table_points], (210, 160, 40))
+    cv2.addWeighted(table_layer, .12, frame, .88, 0, frame)
+    cv2.polylines(frame, [table_points], True, (210, 160, 40), 3, cv2.LINE_AA)
+    if scene.net_polygon_xy is not None:
+        net_points = np.round(scene.net_polygon_xy).astype(np.int32)
+        cv2.polylines(frame, [net_points], True, (255, 70, 210), 3, cv2.LINE_AA)
+        cv2.line(frame, tuple(net_points[0]), tuple(net_points[1]), (255, 255, 255), 2, cv2.LINE_AA)
     for candidate in candidates[:20]:
         x, y, w, h = candidate.bbox_xywh
         cv2.rectangle(frame, (x, y), (x + w, y + h), (120, 120, 120), 1)
@@ -114,7 +173,8 @@ def draw_overlay(frame, candidates, tracked, trail, scene, events_now):
     for (a, sa), (b, sb) in zip(trail[:-1], trail[1:]):
         cv2.line(frame, tuple(np.round(a).astype(int)), tuple(np.round(b).astype(int)), STATUS_COLORS[sb], 2)
     if tracked.state is not None:
-        future_times = [tracked.timestamp_s + i / 60 for i in range(1, 9)]
+        future_origin = max(tracked.timestamp_s, tracked.state.timestamp_s)
+        future_times = [future_origin + i / 60 for i in range(1, 9)]
         for state in predict_trajectory(tracked.state, future_times, BallPhysicalParams.from_json(
                 ROOT / "config/ball_tracking_defaults.json")):
             p = tuple(np.round(scene.project(state.position_m)).astype(int))
@@ -129,9 +189,59 @@ def draw_overlay(frame, candidates, tracked, trail, scene, events_now):
     for j, event in enumerate(events_now):
         cv2.putText(frame, event["type"], (frame.shape[1] // 2 - 180, 70 + 34 * j),
                     cv2.FONT_HERSHEY_SIMPLEX, .8, (40, 240, 255), 2)
+    if context is not None:
+        colors = {"left": (255, 210, 40), "right": (65, 235, 80)}
+        for player in ("left", "right"):
+            body, racket = context.bodies.get(player), context.rackets.get(player)
+            if body is not None and body.landmarks_xy is not None:
+                quality = body.landmark_confidence
+                for start, end in POSE_CONNECTIONS:
+                    a, b = body.landmarks_xy[start], body.landmarks_xy[end]
+                    reliable = (np.all(np.isfinite(a)) and np.all(np.isfinite(b))
+                                and (quality is None or min(quality[start], quality[end]) >= .12))
+                    if reliable:
+                        cv2.line(frame, tuple(np.round(a).astype(int)), tuple(np.round(b).astype(int)),
+                                 colors[player], 2, cv2.LINE_AA)
+                for index, point in enumerate(body.landmarks_xy):
+                    if (np.all(np.isfinite(point))
+                            and (quality is None or quality[index] >= .12)):
+                        cv2.circle(frame, tuple(np.round(point).astype(int)), 3,
+                                   colors[player], -1, cv2.LINE_AA)
+            if body is not None and body.right_wrist_xy is not None:
+                wrist_point = tuple(np.round(body.right_wrist_xy).astype(int))
+                cv2.circle(frame, wrist_point, 11, (255, 45, 220), 3, cv2.LINE_AA)
+            if racket is not None and racket.pose is not None:
+                points = np.round(racket.pose.keypoints_xy).astype(int)
+                head = points[[0, 4, 1, 3]]
+                cv2.polylines(frame, [head], True, colors[player], 3, cv2.LINE_AA)
+                cv2.line(frame, tuple(points[1]), tuple(points[2]), colors[player], 4, cv2.LINE_AA)
+                for point in points:
+                    cv2.circle(frame, tuple(point), 5, colors[player], -1, cv2.LINE_AA)
+                if body is not None and body.right_wrist_xy is not None:
+                    cv2.line(frame, tuple(np.round(body.right_wrist_xy).astype(int)), tuple(points[2]),
+                             (255, 45, 220), 2, cv2.LINE_AA)
+        panel_width, gap = 430, 20
+        start_x, top = (frame.shape[1] - 2 * panel_width - gap) // 2, frame.shape[0] - 80
+        overlay = frame.copy()
+        cv2.rectangle(overlay, (start_x, top), (start_x + 2 * panel_width + gap, frame.shape[0] - 8),
+                      (10, 10, 10), -1)
+        cv2.addWeighted(overlay, .72, frame, .28, 0, frame)
+        for offset, player in enumerate(("left", "right")):
+            racket = context.rackets.get(player)
+            status = "LOST" if racket is None else racket.status.value
+            confidence = 0 if racket is None else racket.confidence
+            cv2.putText(frame, f"{player.upper()} racket {status} conf {confidence:.2f}",
+                        (start_x + offset * (panel_width + gap) + 12, top + 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, .55, colors[player], 2, cv2.LINE_AA)
+        if multimodal is not None:
+            cv2.putText(frame, f"INTERACCION: {multimodal.mode.value}", (start_x + 12, top + 61),
+                        cv2.FONT_HERSHEY_SIMPLEX, .58, (40, 240, 255), 2, cv2.LINE_AA)
+            for rank, alternative in enumerate(multimodal.alternatives[1:3], 1):
+                cv2.circle(frame, (int(round(alternative[0])), int(round(alternative[1]))),
+                           8 + 3 * rank, (180, 80, 255), 1, cv2.LINE_AA)
 
 
-def detect_event(observed_history, wrist, frame_index, scene, existing):
+def detect_event(observed_history, context_history, frame_index, scene, existing):
     if len(observed_history) < 3:
         return []
     a, b, c = observed_history[-3:]
@@ -141,19 +251,33 @@ def detect_event(observed_history, wrist, frame_index, scene, existing):
     v1, v2 = (b[1] - a[1]) / dt1, (c[1] - b[1]) / dt2
     delta = float(np.linalg.norm(v2 - v1))
     events = []
-    if v1[1] > 120 and v2[1] < -80 and scene.close_to_table_surface(b[1], 35):
+    table_x = scene.table_polygon_xy[:, 0]
+    near_surface = (table_x.min() - 25 <= b[1][0] <= table_x.max() + 25
+                    and scene.close_to_table_surface(b[1], margin_px=25))
+    if v1[1] > 120 and v2[1] < -80 and near_surface:
         confidence = float(np.clip((v1[1] - v2[1]) / 1200, .15, .9))
         events.append({"type": "possible_table_bounce", "timestamp_s": b[0], "frame": b[2],
                        "x_px": b[1][0], "y_px": b[1][1], "confidence": confidence})
-    wrist_xy = wrist["xy"][b[2]] if b[2] < len(wrist["xy"]) else np.array([np.nan, np.nan])
-    distance = float(np.linalg.norm(b[1] - wrist_xy)) if np.all(np.isfinite(wrist_xy)) else math.inf
     cosine = float(np.dot(v1, v2) / max(np.linalg.norm(v1) * np.linalg.norm(v2), 1e-6))
-    if distance <= 130 and (delta >= 350 or cosine < .45):
-        confidence = float(np.clip(.45 * (1 - distance / 160) + .35 * min(delta / 1200, 1) +
-                                   .2 * wrist["quality"][b[2]], .1, .95))
-        events.append({"type": "possible_racket_contact", "timestamp_s": b[0], "frame": b[2],
-                       "x_px": b[1][0], "y_px": b[1][1], "confidence": confidence,
-                       "right_wrist_distance_px": distance, "trajectory_velocity_change_px_s": delta})
+    context = context_history.get(b[2])
+    if context is not None and (delta >= 350 or cosine < .45):
+        for metric in interaction_metrics(b[1], v1, context):
+            racket = context.rackets.get(metric.player_id)
+            if racket is None or racket.pose is None:
+                continue
+            model_ok = racket.status == TrackStatus.OBSERVED and racket.confidence >= .30 and metric.distance_px <= 145
+            proxy_ok = (metric.distance_px <= 100 and metric.closing_speed_px_s >= 300
+                        and metric.time_to_closest_s is not None and metric.time_to_closest_s <= .12)
+            if not (model_ok or proxy_ok):
+                continue
+            confidence = float(np.clip(.45 * (1 - metric.distance_px / 170)
+                                       + .35 * min(delta / 1200, 1) + .2 * racket.confidence, .1, .95))
+            events.append({"type": "possible_racket_contact", "timestamp_s": b[0], "frame": b[2],
+                           "x_px": b[1][0], "y_px": b[1][1], "confidence": confidence,
+                           "actor": metric.player_id, "racket_distance_px": metric.distance_px,
+                           "closing_speed_px_s": metric.closing_speed_px_s,
+                           "trajectory_velocity_change_px_s": delta,
+                           "reason": "direction_change_near_associated_racket"})
     return [event for event in events if all(event["type"] != old["type"] or
                                               abs(event["timestamp_s"] - old["timestamp_s"]) > .25
                                               for old in existing)]
@@ -209,9 +333,29 @@ def evaluate_manual_reference(stem: str, records, events):
         return {"available": False}
     reference = json.loads(path.read_text(encoding="utf-8"))
     methods = {}
-    for method in ("isolated", "temporal", "physical"):
+    expected_events = reference.get("events", [])
+    event_frames = [int(event["frame"]) for event in expected_events]
+
+    def canonical_visibility(label):
+        label = str(label).lower()
+        if "out_of_frame" in label:
+            return "out_of_frame"
+        if "occlud" in label:
+            return "occluded"
+        if "blur" in label:
+            return "blurred"
+        return "visible"
+    for method in ("isolated", "temporal", "physical", "multimodal"):
         errors, observed_errors, predicted_errors, misses, false_positive_frames = [], [], [], [], []
+        by_visibility = {name: {"points": 0, "true_positive": 0, "available": 0}
+                         for name in ("visible", "blurred", "occluded", "out_of_frame")}
+        outside_events = {"points": 0, "true_positive": 0, "available": 0}
         for point in reference["points"]:
+            visibility = canonical_visibility(point.get("visibility", "visible"))
+            by_visibility[visibility]["points"] += 1
+            outside = all(abs(int(point["frame"]) - event_frame) > 3 for event_frame in event_frames)
+            if outside:
+                outside_events["points"] += 1
             row = records[int(point["frame"])]
             if method == "isolated":
                 x, y = row.get("isolated_x_px", ""), row.get("isolated_y_px", "")
@@ -225,11 +369,25 @@ def evaluate_manual_reference(stem: str, records, events):
             if x == "" or y == "" or source is None:
                 misses.append(int(point["frame"]))
                 continue
+            by_visibility[visibility]["available"] += 1
+            if outside:
+                outside_events["available"] += 1
             error = float(np.hypot(float(x) - point["x_px"], float(y) - point["y_px"]))
             errors.append(error)
             (predicted_errors if source == "predicted" else observed_errors).append(error)
             if error > max(50, 2 * float(point["uncertainty_px"])):
                 false_positive_frames.append(int(point["frame"]))
+            else:
+                by_visibility[visibility]["true_positive"] += 1
+                if outside:
+                    outside_events["true_positive"] += 1
+        true_positive = len(errors) - len(false_positive_frames)
+
+        def classification(values):
+            precision = values["true_positive"] / max(values["available"], 1)
+            recall = values["true_positive"] / max(values["points"], 1)
+            return {**values, "precision": precision, "recall": recall,
+                    "f1": 0 if precision + recall == 0 else 2 * precision * recall / (precision + recall)}
         methods[method] = {
             "annotated_points": len(reference["points"]), "available_points": len(errors),
             "coverage_pct": 100 * len(errors) / len(reference["points"]),
@@ -241,15 +399,29 @@ def evaluate_manual_reference(stem: str, records, events):
             "observed_points": len(observed_errors), "predicted_points": len(predicted_errors),
             "predicted_median_error_px": None if not predicted_errors else float(np.median(predicted_errors)),
             "missed_frames": misses, "observable_false_positive_frames": false_positive_frames,
+            "precision_in_annotated_points": true_positive / max(len(errors), 1),
+            "recall_in_annotated_points": true_positive / len(reference["points"]),
+            "f1_in_annotated_points": 2 * true_positive / max(len(errors) + len(reference["points"]), 1),
+            "by_visibility": {name: classification(values) for name, values in by_visibility.items()},
+            "outside_event_windows": classification(outside_events),
         }
     event_results = []
-    for expected in reference.get("events", []):
+    recovered = 0
+    for expected in expected_events:
         matches = [event for event in events if event["type"] == expected["type"] and
                    abs(int(event["frame"]) - int(expected["frame"])) <= int(expected["tolerance_frames"])]
+        frame = int(expected["frame"])
+        recovery = next((offset for offset in range(0, 3) if frame + offset < len(records)
+                         and records[frame + offset]["multimodal_status"] in ("OBSERVED", "PREDICTED")), None)
+        recovered += recovery is not None
         event_results.append({**expected, "detected": bool(matches),
-                              "detected_frame": None if not matches else int(min(matches, key=lambda e: abs(e["frame"] - expected["frame"]))["frame"])})
+                              "detected_frame": None if not matches else int(min(matches, key=lambda e: abs(e["frame"] - expected["frame"]))["frame"]),
+                              "multimodal_recovered_within_2_frames": recovery is not None,
+                              "recovery_offset_frames": recovery})
     return {"available": True, "reference": str(path.relative_to(ROOT)), "methods": methods,
             "events": event_results,
+            "event_recovery_within_2_frames_pct": None if not expected_events else 100 * recovered / len(expected_events),
+            "event_precision": "not estimable from sparse non-exhaustive event annotations",
             "warning": "sparse approximate subset; detector centroids were visually accepted/corrected, so localization error is optimistic and not independent"}
 
 
@@ -318,46 +490,96 @@ def process(stem: str, output_root: Path, make_overlay: bool):
     if stem not in scenes:
         raise KeyError(f"No explicit scene calibration for {stem}")
     scene_config = scenes[stem]
+    geometry_path = table_annotation_path(ROOT / "data/annotations/table_geometry", stem)
+    geometry_source = "config/ball_tracking_scenes.json (approximate fallback)"
+    net_polygon = None
+    if geometry_path.exists():
+        geometry = load_table_geometry(geometry_path, video_path=video)
+        scene_config = {**scene_config, "table_polygon_xy": geometry["table_polygon_xy"].tolist(),
+                        "calibration_status": "manual fixed-camera surface and net annotation"}
+        net_polygon = geometry["net_polygon_xy"]
+        geometry_source = str(geometry_path.relative_to(ROOT))
     detector_config = BallDetectorConfig.from_json(ROOT / "config/ball_detection_defaults.json")
     physical_params = BallPhysicalParams.from_json(ROOT / "config/ball_tracking_defaults.json")
     timestamps, timestamp_source = video_timestamps(video)
     background = estimate_static_background(video)
     cap = cv2.VideoCapture(str(video))
     width, height = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = 1 / np.median(np.diff(timestamps))
-    if len(timestamps) != int(cap.get(cv2.CAP_PROP_FRAME_COUNT)):
+    ensure_output_layout(output_root)
+    two_player_cache = artifact_path(output_root, "arrays", stem, "two_players", "pose_landmarks", ".npz")
+    left_player_cache = artifact_path(output_root, "arrays", stem, "left_player", "pose_landmarks", ".npz")
+    racketvision_cache = artifact_path(output_root, "arrays", stem, "racketvision", "cache", ".jsonl")
+    # Container metadata can advertise one trailing packet that OpenCV cannot
+    # decode. Align all modalities to their common, actually processed prefix.
+    available_frames = len(timestamps)
+    if two_player_cache.exists():
+        with np.load(two_player_cache) as pose_cache:
+            available_frames = min(available_frames, len(pose_cache["left_normalized"]),
+                                   len(pose_cache["right_normalized"]))
+    racketvision_frames = None
+    if racketvision_cache.exists():
+        racketvision_frames = load_cache(racketvision_cache)
+        available_frames = min(available_frames, len(racketvision_frames))
+    if available_frames < 3:
         cap.release()
-        raise ValueError("decoded frame count and timestamp count differ")
+        raise ValueError("fewer than three common frames across video modalities")
+    if available_frames != len(timestamps):
+        print(f"Aligning modalities to {available_frames} decodable frames (container reports {len(timestamps)})",
+              flush=True)
+        timestamps = timestamps[:available_frames]
+    fps = 1 / np.median(np.diff(timestamps))
     scene = PlanarSceneCalibration(np.array(scene_config["table_polygon_xy"], float),
-                                   pixels_per_m_vertical=scene_config["pixels_per_m_vertical"])
+                                   pixels_per_m_vertical=scene_config["pixels_per_m_vertical"],
+                                   net_polygon_xy=net_polygon)
     physical = ProjectedBallTracker(scene, physical_params, use_physics=True)
     temporal = ProjectedBallTracker(scene, physical_params, use_physics=False)
+    variant_specs = {
+        "balltrack_model": (False, False),
+        "body_context": (False, False),
+        "bounce_hypothesis": (True, False),
+        "racket_priors": (False, True),
+        "full_multimodal": (True, True),
+    }
+    variant_trackers = {
+        name: InteractionAwareBallTracker(
+            ProjectedBallTracker(scene, physical_params, use_physics=True), scene,
+            enable_bounce=flags[0], enable_contact=flags[1],
+        ) for name, flags in variant_specs.items()
+    }
     wrist = load_wrist(stem, timestamps, width, height)
-    output = output_root / stem
-    output.mkdir(parents=True, exist_ok=True)
-    writer = None
-    if make_overlay:
-        writer = cv2.VideoWriter(str(output / "ball_tracking_diagnostic.mp4"),
-                                 cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
-        if not writer.isOpened():
-            raise RuntimeError("could not open diagnostic video writer")
+    body_frames, body_source = load_body_frames(two_player_cache, left_player_cache,
+                                                 len(timestamps), width, height)
+    if racketvision_frames is not None:
+        racketvision_frames = racketvision_frames[:len(timestamps)]
+        racketvision_source = str(racketvision_cache.relative_to(ROOT))
+    else:
+        racketvision_frames = [RacketVisionFrame(index, float(timestamp), (), ())
+                               for index, timestamp in enumerate(timestamps)]
+        racketvision_source = "unavailable; classical ball and wrist-forearm racket fallback active"
+    racket_tracker = TwoRacketTracker()
+    video_output = artifact_path(output_root, "videos", stem, "ball_tracking", "diagnostic", ".mp4")
     ok0, previous = cap.read()
     ok1, current = cap.read()
     if not (ok0 and ok1):
         raise ValueError("could not decode initial frames")
-    records, observed_history, events, trail = [], [], [], []
+    records, observed_history, baseline_observed_history, events, trail = [], [], [], [], []
+    overlay_payloads = []
+    context_history = {}
+    variant_frames = {name: [] for name in variant_trackers}
+    variant_modes = {name: [] for name in variant_trackers}
 
     def consume(index, frame, candidates):
         nonlocal trail
-        predicted = physical.predict_pixel(timestamps[index])
+        timestamp = float(timestamps[index])
+        predicted = physical.predict_pixel(timestamp)
         isolated = candidates[0] if candidates else None
-        temporal_result = temporal.step(timestamps[index], candidates)
-        physical_result = physical.step(timestamps[index], candidates)
+        temporal_result = temporal.step(timestamp, candidates)
+        physical_result = physical.step(timestamp, candidates)
         # A free-flight model must not be propagated blindly through racket
         # impact. If the first missing observation occurs next to the main
         # player's right wrist, close the segment and seed a fresh trajectory.
-        if physical_result.status == TrackStatus.PREDICTED and physical_result.missed_frames == 1 and observed_history:
-            last_time, last_xy, last_frame = observed_history[-1]
+        if physical_result.status == TrackStatus.PREDICTED and physical_result.missed_frames == 1 and baseline_observed_history:
+            last_time, last_xy, last_frame = baseline_observed_history[-1]
             wrist_xy = wrist["xy"][last_frame]
             distance = float(np.linalg.norm(last_xy - wrist_xy)) if np.all(np.isfinite(wrist_xy)) else math.inf
             if distance <= 140 and wrist["quality"][last_frame] >= .3:
@@ -367,30 +589,52 @@ def process(stem: str, output_root: Path, make_overlay: bool):
                            "right_wrist_distance_px": distance,
                            "trajectory_velocity_change_px_s": None,
                            "reason": "track_break_near_right_wrist"}
-                if all(contact["type"] != old["type"] or abs(contact["timestamp_s"] - old["timestamp_s"]) > .25
-                       for old in events):
-                    events.append(contact)
                 physical.reset_for_discontinuity()
-                physical_result = physical.step(timestamps[index], candidates)
+                physical_result = physical.step(timestamp, candidates)
                 trail = []
-        record = frame_record(index, float(timestamps[index]), candidates, isolated, temporal_result, physical_result)
+        if physical_result.observed_xy is not None:
+            baseline_observed_history.append((timestamp, physical_result.observed_xy.copy(), index))
+            baseline_observed_history[:] = baseline_observed_history[-8:]
+        model_frame = racketvision_frames[index]
+        rackets = racket_tracker.step(timestamp, model_frame.rackets, body_frames[index], width)
+        empty_context = InteractionContext(timestamp)
+        body_context = InteractionContext(timestamp, body_frames[index], {})
+        full_context = InteractionContext(timestamp, body_frames[index], rackets)
+        context_history[index] = full_context
+        contexts = {
+            "balltrack_model": empty_context,
+            "body_context": body_context,
+            "bounce_hypothesis": body_context,
+            "racket_priors": full_context,
+            "full_multimodal": full_context,
+        }
+        multimodal_results = {}
+        for name, tracker in variant_trackers.items():
+            multimodal_results[name] = tracker.step(timestamp, candidates,
+                                                     model_frame.ball_candidates, contexts[name],
+                                                     anchor=physical_result)
+            variant_frames[name].append(multimodal_results[name].track)
+            variant_modes[name].append(multimodal_results[name].mode)
+        multimodal = multimodal_results["full_multimodal"]
+        overlay_payloads.append((tuple(candidates), multimodal, full_context))
+        record = frame_record(index, timestamp, candidates, isolated, temporal_result,
+                              physical_result, multimodal, full_context)
+        for name, result in multimodal_results.items():
+            record[f"ablation_{name}_status"] = result.track.status.value
         records.append(record)
         events_now = []
-        point = physical_result.observed_xy if physical_result.observed_xy is not None else physical_result.predicted_xy
-        if point is not None and physical_result.status in (TrackStatus.OBSERVED, TrackStatus.PREDICTED):
-            trail.append((point.copy(), physical_result.status))
+        full_track = multimodal.track
+        point = full_track.observed_xy if full_track.observed_xy is not None else full_track.predicted_xy
+        if point is not None and full_track.status in (TrackStatus.OBSERVED, TrackStatus.PREDICTED):
+            trail.append((point.copy(), full_track.status))
             trail[:] = trail[-35:]
-        elif physical_result.status == TrackStatus.LOST:
+        elif full_track.status == TrackStatus.LOST:
             trail = []
-        if physical_result.observed_xy is not None:
-            observed_history.append((float(timestamps[index]), physical_result.observed_xy.copy(), index))
+        if full_track.observed_xy is not None:
+            observed_history.append((timestamp, full_track.observed_xy.copy(), index))
             observed_history[:] = observed_history[-8:]
-            events_now = detect_event(observed_history, wrist, index, scene, events)
+            events_now = detect_event(observed_history, context_history, index, scene, events)
             events.extend(events_now)
-        if writer is not None:
-            annotated = frame.copy()
-            draw_overlay(annotated, candidates, physical_result, trail, scene, events_now)
-            writer.write(annotated)
 
     consume(0, previous, [])
     index = 1
@@ -407,21 +651,85 @@ def process(stem: str, output_root: Path, make_overlay: bool):
         index += 1
     consume(index, current, [])
     cap.release()
-    if writer is not None:
-        writer.release()
     if len(records) != len(timestamps):
         raise AssertionError(f"processed {len(records)} records for {len(timestamps)} timestamps")
+
+    smoothing = {}
+    for name in variant_trackers:
+        smoothed, corrections = smooth_event_gaps(variant_frames[name], variant_modes[name], scene)
+        variant_frames[name] = smoothed
+        smoothing[name] = corrections
+        if name == "full_multimodal":
+            correction_by_frame = {item["frame"]: item for item in corrections}
+            for frame_index, tracked in enumerate(smoothed):
+                records[frame_index]["multimodal_status"] = tracked.status.value
+                records[frame_index]["multimodal_confidence"] = tracked.confidence
+                for kind, point in (("observed", tracked.observed_xy), ("predicted", tracked.predicted_xy)):
+                    records[frame_index][f"multimodal_{kind}_x_px"] = "" if point is None else point[0]
+                    records[frame_index][f"multimodal_{kind}_y_px"] = "" if point is None else point[1]
+                correction = correction_by_frame.get(frame_index)
+                records[frame_index]["offline_smoothed"] = correction is not None
+                records[frame_index]["smoothing_method"] = "" if correction is None else correction["method"]
+
+    # Render only after the retrospective pass so the diagnostic video and the
+    # exported per-frame metrics show the same corrected nine-frame trajectory.
+    if make_overlay:
+        overlay_cap = cv2.VideoCapture(str(video))
+        writer = cv2.VideoWriter(str(video_output), cv2.VideoWriter_fourcc(*"mp4v"), fps,
+                                 (width, height))
+        if not overlay_cap.isOpened() or not writer.isOpened():
+            overlay_cap.release()
+            writer.release()
+            raise RuntimeError("could not open retrospective diagnostic video pass")
+        overlay_trail = []
+        events_by_frame = {}
+        for event in events:
+            events_by_frame.setdefault(int(event["frame"]), []).append(event)
+        for frame_index, tracked in enumerate(variant_frames["full_multimodal"]):
+            ok, frame = overlay_cap.read()
+            if not ok:
+                break
+            point = tracked.observed_xy if tracked.observed_xy is not None else tracked.predicted_xy
+            if point is not None and tracked.status in (TrackStatus.OBSERVED, TrackStatus.PREDICTED):
+                overlay_trail.append((point.copy(), tracked.status))
+                overlay_trail[:] = overlay_trail[-35:]
+            elif tracked.status == TrackStatus.LOST:
+                overlay_trail = []
+            candidates, causal_multimodal, context = overlay_payloads[frame_index]
+            displayed_multimodal = replace(causal_multimodal, track=tracked)
+            annotated = frame.copy()
+            draw_overlay(annotated, candidates, tracked, overlay_trail, scene,
+                         events_by_frame.get(frame_index, []), displayed_multimodal, context)
+            writer.write(annotated)
+        overlay_cap.release()
+        writer.release()
+        if frame_index + 1 != len(timestamps):
+            raise AssertionError(f"rendered {frame_index + 1} of {len(timestamps)} overlay frames")
 
     strokes = outgoing_records(events, records, wrist)
     manual_validation = evaluate_manual_reference(stem, records, events)
     model_comparison = evaluate_flight_models(stem, scene, timestamps)
-    write_csv(output / "frames.csv", records)
-    write_csv(output / "events.csv", events)
-    write_csv(output / "stroke_dataset.csv", strokes)
+    write_csv(artifact_path(output_root, "metrics", stem, "ball_tracking", "frames", ".csv"), records)
+    write_csv(artifact_path(output_root, "events", stem, "ball_tracking", "events", ".csv"), events)
+    write_csv(artifact_path(output_root, "datasets", stem, "ball_tracking", "strokes", ".csv"), strokes)
     counts = lambda prefix: {status.value: sum(row[prefix + "_status"] == status.value for row in records)
                              for status in TrackStatus}
-    physical_counts, temporal_counts = counts("physical"), counts("temporal")
+    physical_counts, temporal_counts, multimodal_counts = counts("physical"), counts("temporal"), counts("multimodal")
+    ablation = {}
+    for name, frames in variant_frames.items():
+        state_counts = {status.value: sum(frame.status == status for frame in frames) for status in TrackStatus}
+        ablation[name] = {
+            "state_counts": state_counts,
+            "track_coverage_pct": 100 * (state_counts["OBSERVED"] + state_counts["PREDICTED"]) / len(frames),
+            "lost_frames": state_counts["LOST"],
+            "smoothing_corrections": len(smoothing[name]),
+        }
     isolated_count = sum(row["isolated_detected"] for row in records)
+    lost_reduction_pct = 100 * (physical_counts["LOST"] - multimodal_counts["LOST"]) / max(physical_counts["LOST"], 1)
+    baseline_outside = manual_validation.get("methods", {}).get("physical", {}).get("outside_event_windows", {})
+    multimodal_outside = manual_validation.get("methods", {}).get("multimodal", {}).get("outside_event_windows", {})
+    precision_delta_pp = 100 * (multimodal_outside.get("precision", 0) - baseline_outside.get("precision", 0))
+    event_recovery_pct = manual_validation.get("event_recovery_within_2_frames_pct")
     summary = {
         "scope": "real-video exploratory projected tracking; not ground truth validation",
         "video": str(video.relative_to(ROOT)), "difficulty": scene_config["difficulty"],
@@ -430,6 +738,16 @@ def process(stem: str, output_root: Path, make_overlay: bool):
         "detector_isolated": {"frames_with_candidates": isolated_count,
                               "coverage_pct": 100 * isolated_count / len(records),
                               "warning": "coverage includes visual distractors and is not track accuracy"},
+        "racketvision_observations": {
+            "balltrack_frames_with_candidates": sum(bool(frame.ball_candidates) for frame in racketvision_frames),
+            "raw_frames_with_racket_detections": sum(bool(frame.rackets) for frame in racketvision_frames),
+            "raw_racket_instances": sum(len(frame.rackets) for frame in racketvision_frames),
+        },
+        "racket_tracks": {
+            player: {status.value: sum(row[f"{player}_racket_status"] == status.value for row in records)
+                     for status in TrackStatus}
+            for player in ("left", "right")
+        },
         "temporal_constant_velocity": {"state_counts": temporal_counts,
                                        "track_coverage_pct": 100 * (temporal_counts["OBSERVED"] + temporal_counts["PREDICTED"]) / len(records)},
         "physics_informed_projected": {"state_counts": physical_counts,
@@ -439,25 +757,59 @@ def process(stem: str, output_root: Path, make_overlay: bool):
                 max(physical_counts["OBSERVED"] + physical_counts["PREDICTED"], 1),
             "loss_transitions": sum(records[i - 1]["physical_status"] != "LOST" and records[i]["physical_status"] == "LOST"
                                     for i in range(1, len(records)))},
+        "multimodal": {
+            "state_counts": multimodal_counts,
+            "track_coverage_pct": 100 * (multimodal_counts["OBSERVED"] + multimodal_counts["PREDICTED"]) / len(records),
+            "interaction_mode_counts": {mode.value: sum(row["interaction_mode"] == mode.value for row in records)
+                                        for mode in InteractionMode},
+            "offline_smoothing_corrections": len(smoothing["full_multimodal"]),
+            "racketvision_source": racketvision_source,
+            "body_pose_source": body_source,
+        },
+        "ablation": {"baseline_classical_physics": {
+            "state_counts": physical_counts,
+            "track_coverage_pct": 100 * (physical_counts["OBSERVED"] + physical_counts["PREDICTED"]) / len(records),
+            "lost_frames": physical_counts["LOST"],
+        }, **ablation},
+        "acceptance": {
+            "lost_frame_reduction_pct": lost_reduction_pct,
+            "lost_frame_reduction_target_pct": 30,
+            "lost_frame_reduction_pass": lost_reduction_pct >= 30,
+            "annotated_event_recovery_within_2_frames_pct": event_recovery_pct,
+            "event_recovery_target_pct": 80,
+            "event_recovery_pass": None if event_recovery_pct is None else event_recovery_pct >= 80,
+            "outside_event_precision_delta_percentage_points": precision_delta_pp,
+            "outside_event_precision_pass": precision_delta_pp >= -2,
+            "common_visible_localization": "unchanged by construction: valid classical observations anchor the multimodal tracker",
+            "racket_player_association_accuracy": "not evaluable until independent five-keypoint racket annotations exist",
+            "racket_finetuning_decision": "deferred; pretrained recall cannot be measured from current annotations",
+        },
         "events": {"possible_racket_contacts": sum(e["type"] == "possible_racket_contact" for e in events),
                    "possible_table_bounces": sum(e["type"] == "possible_table_bounce" for e in events)},
         "outgoing_strokes": strokes,
         "manual_validation": manual_validation,
         "flight_model_comparison": model_comparison,
-        "player_kinematics_source": wrist["source"],
-        "geometry": {"table_corners_px_manual": scene_config["table_polygon_xy"],
+        "player_kinematics_source": body_source,
+        "geometry": {"table_corners_px": scene_config["table_polygon_xy"],
+                     "net_polygon_px": None if net_polygon is None else net_polygon.tolist(),
+                     "source": geometry_source,
                      "table_length_m_prior": 2.74, "pixels_per_m_vertical_prior": scene_config["pixels_per_m_vertical"],
                      "status": scene_config["calibration_status"]},
         "identifiability": {"ball_speed_px_s": "estimated when >=2 post-contact observations",
                             "metric_ball_speed_m_s": "not identifiable from current monocular approximate calibration",
                             "spin": "spin_not_identifiable", "magnus_used": False},
-        "limitations": ["candidate coverage is not precision", "manual approximate table polygon",
+        "limitations": ["candidate coverage is not precision",
+                        "table geometry remains approximate until its annotation JSON is manually confirmed",
                         "single view does not recover depth", "30 fps undersamples fast ball flight",
-                        "events are hypotheses, not verified contacts", "foreground includes moving players"],
+                        "events are hypotheses, not verified contacts", "foreground includes moving players",
+                        "racket wrist-forearm proxies are explicitly lower confidence than RacketVision detections"],
     }
-    (output / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    artifact_path(output_root, "summaries", stem, "ball_tracking", "summary", ".json").write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
     print(json.dumps({"clip": stem, "isolated": isolated_count, "temporal": temporal_counts,
-                      "physical": physical_counts, "events": summary["events"]}, ensure_ascii=False), flush=True)
+                      "physical": physical_counts, "multimodal": multimodal_counts,
+                      "events": summary["events"]}, ensure_ascii=False), flush=True)
     return summary
 
 
@@ -465,13 +817,13 @@ def write_report(output_root: Path, summaries):
     lines = ["# Primera prueba real de seguimiento de bola", "",
              "Resultados exploratorios. Observación visual, predicción y pérdida se conservan como estados distintos. "
              "La calibración es planar y aproximada: no se reporta velocidad métrica ni spin medido.", "",
-             "| Video | Dificultad | Candidatos aislados | Temporal | Físico proyectado | Observados / predichos | Contactos / botes |",
-             "|---|---|---:|---:|---:|---:|---:|"]
+             "| Video | Dificultad | Físico base | Multimodal | Perdidos base→fusión | Contactos / botes |",
+             "|---|---|---:|---:|---:|---:|"]
     for s in summaries:
         p = s["physics_informed_projected"]
-        lines.append(f"| {Path(s['video']).name} | {s['difficulty']} | {s['detector_isolated']['coverage_pct']:.1f}% | "
-                     f"{s['temporal_constant_velocity']['track_coverage_pct']:.1f}% | {p['track_coverage_pct']:.1f}% | "
-                     f"{p['observed_frames']} / {p['predicted_frames']} | "
+        m = s["multimodal"]
+        lines.append(f"| {Path(s['video']).name} | {s['difficulty']} | {p['track_coverage_pct']:.1f}% | "
+                     f"{m['track_coverage_pct']:.1f}% | {p['state_counts']['LOST']}→{m['state_counts']['LOST']} | "
                      f"{s['events']['possible_racket_contacts']} / {s['events']['possible_table_bounces']} |")
     for s in summaries:
         validation = s.get("manual_validation", {})
@@ -481,7 +833,8 @@ def write_report(output_root: Path, summaries):
                   "| Método | Cobertura | Mediana / P95 / máximo / RMSE (px) | Falsos positivos observables | Frames perdidos |",
                   "|---|---:|---:|---:|---:|"]
         for name, label in (("isolated", "Detector aislado"), ("temporal", "Continuidad temporal"),
-                            ("physical", "Tracker físico proyectado")):
+                            ("physical", "Tracker físico proyectado"),
+                            ("multimodal", "Fusión cuerpo-raquetas-bola")):
             metric = validation["methods"][name]
             lines.append(f"| {label} | {metric['coverage_pct']:.1f}% | {metric['median_error_px']:.1f} / "
                          f"{metric['p95_error_px']:.1f} / {metric['max_error_px']:.1f} / {metric['rmse_px']:.1f} | "
@@ -510,21 +863,26 @@ def write_report(output_root: Path, summaries):
             lines += ["", f"Resultado: `{comparison['conclusion']}`. Que una variante Magnus gane esta rejilla "
                       "pequeña no identifica spin: la proyección es monocular aproximada, hay pocos puntos retenidos "
                       "y el parámetro no se estimó ni se validó de forma independiente."]
-    lines += ["", "`frames.csv` y el MP4 diagnóstico permanecen locales. Los conteos no prueban exactitud: la auditoría "
+    lines += ["", "Los archivos `metrics/*__ball_tracking__frames.csv` y los MP4 de `videos/` permanecen locales. "
+              "Los conteos no prueban exactitud: la auditoría "
               "manual es pequeña y debe ampliarse antes de ajustar umbrales o estudiar Magnus.", "",
               "Variables identificables por ahora: coordenadas 2D, estado observado/predicho, cobertura y velocidad aparente px/s "
               "si hay suficientes observaciones. No identificables: posición/velocidad 3D calibradas y spin; resultado de spin: "
-              "`spin_not_identifiable`."]
-    (output_root / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")
+              "`spin_not_identifiable`.", "",
+              "Las detecciones de eventos continúan siendo hipótesis. Las anotaciones actuales no son exhaustivas, por lo que "
+              "permiten medir recuperación alrededor de eventos conocidos, pero no precisión global de eventos ni PCK de raqueta."]
+    artifact_path(output_root, "reports", "batch", "ball_tracking", "report", ".md").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("clips", nargs="*", default=DEFAULT_CLIPS)
-    parser.add_argument("--output-root", type=Path, default=ROOT / "data/processed/ball_tracking_real")
+    parser.add_argument("--output-root", type=Path, default=ROOT / "data/processed")
     parser.add_argument("--no-overlay", action="store_true")
     args = parser.parse_args()
-    args.output_root.mkdir(parents=True, exist_ok=True)
+    ensure_output_layout(args.output_root)
     summaries = [process(stem, args.output_root, not args.no_overlay) for stem in args.clips]
     write_report(args.output_root, summaries)
 

@@ -6,6 +6,7 @@ import argparse
 import csv
 import json
 import math
+import shutil
 import subprocess
 from collections import deque
 from contextlib import ExitStack
@@ -17,12 +18,13 @@ import mediapipe as mp
 import numpy as np
 
 from seima_mocap.landmarks import POSE_CONNECTIONS, RIGHT_WRIST
+from seima_mocap.output_layout import artifact_path, ensure_output_layout
 
 
 UPPER_BODY = (0, 11, 12, 13, 14, 15, 16, 23, 24)
 PLAYER_CONFIG = {
-    "left": {"label": "JUGADOR IZQUIERDO (NEGRO)", "color": (255, 210, 40)},
-    "right": {"label": "JUGADOR DERECHO (ROJO)", "color": (65, 235, 80)},
+    "left": {"label": "JUGADOR IZQUIERDO", "color": (255, 210, 40)},
+    "right": {"label": "JUGADOR DERECHO", "color": (65, 235, 80)},
 }
 
 
@@ -48,6 +50,7 @@ class Detection:
     presence: float
     upper_visibility: float
     completeness: float
+    bottom_y: float
 
 
 @dataclass
@@ -88,6 +91,7 @@ def describe(index: int, landmarks) -> Detection:
         presence=float(pres.mean()),
         upper_visibility=float(vis[list(UPPER_BODY)].mean()),
         completeness=float(reliable.mean()),
+        bottom_y=float(high[1]),
     )
 
 
@@ -119,7 +123,19 @@ def assignment_score(detection: Detection, track: Track) -> float:
         else:
             scale_match = 1.0
         continuity = 0.80 * center_match + 0.20 * scale_match
-    return 0.50 * side_match + 0.30 * continuity + 0.20 * quality_score
+    foreground_size = 1.0 - math.exp(-detection.area / 0.035)
+    foreground_depth = float(np.clip((detection.bottom_y - 0.42) / 0.38, 0.0, 1.0))
+    return (0.30 * side_match + 0.25 * continuity + 0.15 * quality_score
+            + 0.20 * foreground_size + 0.10 * foreground_depth)
+
+
+def select_side_detection(detections: list[Detection], track: Track) -> Detection | None:
+    """Choose the foreground athlete and reject small background bystanders."""
+    candidates = [detection for detection in detections
+                  if detection.area >= 0.012 and detection.bottom_y >= 0.52]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda detection: assignment_score(detection, track))
 
 
 def assign_detections(detections: list[Detection], tracks: dict[str, Track]) -> dict[str, Detection | None]:
@@ -269,12 +285,13 @@ def summarize(rows: list[dict], video_info: dict, output_path: Path) -> dict:
 
 
 def process(input_path: Path, output_dir: Path, model_path: Path) -> None:
-    output_dir.mkdir(parents=True, exist_ok=True)
+    ensure_output_layout(output_dir)
     stem = input_path.stem
-    silent_path = output_dir / f"{stem}_two_players_silent.mp4"
-    video_path = output_dir / f"{stem}_two_players_annotated.mp4"
-    csv_path = output_dir / f"{stem}_two_players_metrics.csv"
-    summary_path = output_dir / f"{stem}_two_players_summary.json"
+    silent_path = artifact_path(output_dir, "videos", stem, "two_players", "silent", ".mp4")
+    video_path = artifact_path(output_dir, "videos", stem, "two_players", "annotated", ".mp4")
+    csv_path = artifact_path(output_dir, "metrics", stem, "two_players", "frame_metrics", ".csv")
+    summary_path = artifact_path(output_dir, "summaries", stem, "two_players", "summary", ".json")
+    pose_cache_path = artifact_path(output_dir, "arrays", stem, "two_players", "pose_landmarks", ".npz")
 
     cap = cv2.VideoCapture(str(input_path))
     if not cap.isOpened():
@@ -290,7 +307,7 @@ def process(input_path: Path, output_dir: Path, model_path: Path) -> None:
     options = mp.tasks.vision.PoseLandmarkerOptions(
         base_options=mp.tasks.BaseOptions(model_asset_path=str(model_path.resolve())),
         running_mode=mp.tasks.vision.RunningMode.VIDEO,
-        num_poses=1,
+        num_poses=2,
         min_pose_detection_confidence=0.25,
         min_pose_presence_confidence=0.25,
         min_tracking_confidence=0.25,
@@ -298,6 +315,7 @@ def process(input_path: Path, output_dir: Path, model_path: Path) -> None:
     )
     tracks = {side: Track(side) for side in ("left", "right")}
     rows: list[dict] = []
+    normalized_rows: dict[str, list[np.ndarray]] = {"left": [], "right": []}
     last_timestamp_ms = -1
 
     try:
@@ -324,9 +342,16 @@ def process(input_path: Path, output_dir: Path, model_path: Path) -> None:
                     side_result = landmarkers[side].detect_for_video(
                         mp.Image(image_format=mp.ImageFormat.SRGB, data=crop_rgb), timestamp_ms
                     )
-                    side_landmarks[side] = (
-                        map_crop_landmarks(side_result.pose_landmarks[0], x0, x1 - x0, width)
-                        if side_result.pose_landmarks else None
+                    mapped = [map_crop_landmarks(pose, x0, x1 - x0, width)
+                              for pose in side_result.pose_landmarks]
+                    detections = [describe(index, pose) for index, pose in enumerate(mapped)]
+                    selected = select_side_detection(detections, tracks[side])
+                    side_landmarks[side] = None if selected is None else mapped[selected.index]
+                    landmarks = side_landmarks[side]
+                    normalized_rows[side].append(
+                        np.full((33, 5), np.nan, dtype=float) if landmarks is None else
+                        np.array([[point.x, point.y, point.z, point.visibility, point.presence]
+                                  for point in landmarks], dtype=float)
                     )
                 states: dict[str, dict] = {}
                 row: dict = {
@@ -400,17 +425,33 @@ def process(input_path: Path, output_dir: Path, model_path: Path) -> None:
         output = csv.DictWriter(handle, fieldnames=list(rows[0]))
         output.writeheader()
         output.writerows(rows)
+    np.savez_compressed(
+        pose_cache_path,
+        left_normalized=np.stack(normalized_rows["left"]),
+        right_normalized=np.stack(normalized_rows["right"]),
+        fps=fps, width=width, height=height,
+        schema_version="seima.two-player-pose.v1",
+    )
     info = {
         "input": str(input_path), "output": str(video_path), "width": width, "height": height,
         "fps": round(fps, 5), "frames": len(rows), "duration_s": round(len(rows) / fps, 5),
     }
     summary = summarize(rows, info, summary_path)
-    subprocess.run([
-        "ffmpeg", "-loglevel", "error", "-y", "-i", str(silent_path), "-i", str(input_path),
-        "-map", "0:v:0", "-map", "1:a:0?", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
-        "-c:a", "aac", "-b:a", "192k", str(video_path),
-    ], check=True)
-    silent_path.unlink(missing_ok=True)
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        # The visual result is complete even when the optional audio remuxer is
+        # unavailable. Keep the OpenCV-encoded artifact instead of discarding it.
+        silent_path.replace(video_path)
+        summary["audio"] = "omitted: ffmpeg unavailable"
+    else:
+        subprocess.run([
+            ffmpeg, "-loglevel", "error", "-y", "-i", str(silent_path), "-i", str(input_path),
+            "-map", "0:v:0", "-map", "1:a:0?", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+            "-c:a", "aac", "-b:a", "192k", str(video_path),
+        ], check=True)
+        silent_path.unlink(missing_ok=True)
+        summary["audio"] = "copied from source when present"
+    summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(summary, indent=2, ensure_ascii=False))
 
 

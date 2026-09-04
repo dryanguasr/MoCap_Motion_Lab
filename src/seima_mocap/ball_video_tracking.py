@@ -29,6 +29,7 @@ class PlanarSceneCalibration:
     table_polygon_xy: np.ndarray
     table_length_m: float = 2.74
     pixels_per_m_vertical: float = 250.0
+    net_polygon_xy: np.ndarray | None = None
 
     def __post_init__(self):
         polygon = np.asarray(self.table_polygon_xy, dtype=float)
@@ -37,6 +38,11 @@ class PlanarSceneCalibration:
         if self.table_length_m <= 0 or self.pixels_per_m_vertical <= 0:
             raise ValueError("scene scales must be positive")
         object.__setattr__(self, "table_polygon_xy", polygon)
+        if self.net_polygon_xy is not None:
+            net = np.asarray(self.net_polygon_xy, dtype=float)
+            if net.shape != (4, 2) or not np.all(np.isfinite(net)):
+                raise ValueError("net polygon must contain four finite pixel pairs")
+            object.__setattr__(self, "net_polygon_xy", net)
 
     @property
     def left_center(self):
@@ -58,6 +64,22 @@ class PlanarSceneCalibration:
         left, right = self.left_center, self.right_center
         fraction = float(np.clip((pixel_x - left[0]) / max(right[0] - left[0], 1e-6), -0.5, 1.5))
         return float(left[1] + fraction * (right[1] - left[1]))
+
+    def tabletop_y(self, pixel_x: float) -> float:
+        """Image y of the far/top table edge used only as a contact prior."""
+        left, right = self.table_polygon_xy[0], self.table_polygon_xy[1]
+        fraction = float(np.clip((pixel_x - left[0]) / max(right[0] - left[0], 1e-6), -0.25, 1.25))
+        return float(left[1] + fraction * (right[1] - left[1]))
+
+    def table_near_y(self, pixel_x: float) -> float:
+        """Image y of the near table edge at ``pixel_x``."""
+        left, right = self.table_polygon_xy[3], self.table_polygon_xy[2]
+        fraction = float(np.clip((pixel_x - left[0]) / max(right[0] - left[0], 1e-6), -0.25, 1.25))
+        return float(left[1] + fraction * (right[1] - left[1]))
+
+    def surface_bounds_y(self, pixel_x: float) -> tuple[float, float]:
+        values = sorted((self.tabletop_y(pixel_x), self.table_near_y(pixel_x)))
+        return float(values[0]), float(values[1])
 
     def image_to_plane(self, pixel_xy: np.ndarray) -> np.ndarray:
         u, v = np.asarray(pixel_xy, dtype=float)
@@ -149,7 +171,9 @@ class ProjectedBallTracker:
         prediction = np.column_stack([np.polyval(np.polyfit(t - t[0], xy[:, d], 1), t - t[0]) for d in range(2)])
         return float(np.sqrt(np.mean(np.sum((xy - prediction) ** 2, axis=1))))
 
-    def _advance_seeds(self, candidates: Sequence[BallCandidate]) -> _Seed | None:
+    def _advance_seeds(self, candidates: Sequence[BallCandidate], required_observations: int = 3) -> _Seed | None:
+        if required_observations not in (2, 3):
+            raise ValueError("required_observations must be 2 or 3")
         candidates = [candidate for candidate in candidates
                       if candidate.reason_scores.get("motion", 0) >= 0.08
                       and (candidate.reason_scores.get("bright_unsaturated", 0) >= 0.25
@@ -182,7 +206,7 @@ class ProjectedBallTracker:
                                          float(item.candidates[-1].observation.pixel_xy[0])))
         self.seeds = proposals[:100]
         for seed in self.seeds:
-            if len(seed.candidates) < 3:
+            if len(seed.candidates) < required_observations:
                 continue
             xy = np.array([c.observation.pixel_xy for c in seed.candidates])
             span = seed.candidates[-1].observation.timestamp_s - seed.candidates[0].observation.timestamp_s
@@ -207,10 +231,15 @@ class ProjectedBallTracker:
         self.ever_initialized = True
         self.seeds.clear()
 
-    def step(self, timestamp_s: float, candidates: Sequence[BallCandidate]) -> TrackFrame:
+    def step(self, timestamp_s: float, candidates: Sequence[BallCandidate], *,
+             gate_multiplier: float = 1.0, required_seed_observations: int = 3,
+             predicted_velocity_weight: float = .35,
+             max_prediction_frames: int | None = None) -> TrackFrame:
         timestamp_s = float(timestamp_s)
+        if gate_multiplier <= 0 or not 0 <= predicted_velocity_weight <= 1:
+            raise ValueError("invalid event-aware tracking parameters")
         if self.state is None:
-            seed = self._advance_seeds(candidates)
+            seed = self._advance_seeds(candidates, required_seed_observations)
             if seed is None:
                 self.status = TrackStatus.LOST if self.ever_initialized else TrackStatus.UNINITIALIZED
                 return TrackFrame(timestamp_s, self.status, None, None, None, 0.0, self.missed)
@@ -220,14 +249,26 @@ class ProjectedBallTracker:
                               self.state, selected.observation.confidence, 0, selected)
 
         predicted_state = self._predict_state(timestamp_s)
-        assert predicted_state is not None
+        if predicted_state is None:
+            # A discontinuity or an externally anchored observation can leave
+            # the state marginally ahead of the next timestamp.  Treat it as
+            # a new flight segment instead of crashing while propagating a
+            # non-existent prediction.
+            self.reset_for_discontinuity()
+            return self.step(
+                timestamp_s, candidates,
+                gate_multiplier=gate_multiplier,
+                required_seed_observations=required_seed_observations,
+                predicted_velocity_weight=predicted_velocity_weight,
+                max_prediction_frames=max_prediction_frames,
+            )
         predicted_xy = self.calibration.project(predicted_state.position_m)
         candidates = [candidate for candidate in candidates
                       if candidate.reason_scores.get("motion", 0) >= 0.05
                       and (candidate.reason_scores.get("bright_unsaturated", 0) >= 0.18
                            or candidate.reason_scores.get("contrast", 0) >= 0.30)]
         observations = [candidate.observation for candidate in candidates]
-        gate = self.base_gate_px + 28 * self.missed
+        gate = gate_multiplier * (self.base_gate_px + 28 * self.missed)
         match = associate_observations(predicted_state, observations, self.calibration.project,
                                        gate_px=gate, sigma_px=0.55 * gate,
                                        timestamp_tolerance_s=0.002)
@@ -238,7 +279,8 @@ class ProjectedBallTracker:
             if self.last_observed_world is not None and self.last_observed_time is not None:
                 dt = timestamp_s - self.last_observed_time
                 measured_velocity = (measured - self.last_observed_world) / max(dt, 1e-6)
-                velocity = 0.65 * measured_velocity + 0.35 * predicted_state.velocity_m_s
+                velocity = ((1 - predicted_velocity_weight) * measured_velocity
+                            + predicted_velocity_weight * predicted_state.velocity_m_s)
                 apparent_speed = float(np.linalg.norm(match.observation.pixel_xy - self.last_observed_pixel) /
                                        max(dt, 1e-6)) if self.last_observed_pixel is not None else math.inf
                 self.slow_observation_count = self.slow_observation_count + 1 if apparent_speed < 350 else 0
@@ -267,7 +309,8 @@ class ProjectedBallTracker:
                               self.state, confidence, 0, selected)
 
         self.missed += 1
-        if self.missed <= self.max_prediction_frames:
+        prediction_limit = self.max_prediction_frames if max_prediction_frames is None else max_prediction_frames
+        if self.missed <= prediction_limit:
             self.state = predicted_state
             self.status = TrackStatus.PREDICTED
             return TrackFrame(timestamp_s, self.status, None, predicted_xy, self.state,

@@ -106,4 +106,4 @@ Orden de mejora recomendado: (1) sincronización + 3D + fuerzas por pie; (2) ant
 
 ## 9. Relación con el piloto actual
 
-El piloto usa únicamente seis clips cortos ya disponibles, 90 kg, 1.84 m y un modelo planar con supuestos declarados. No se dispone todavía de BIA, plataformas, calibración 3D ni medidas reales de raqueta. Sus resultados no cumplen este protocolo final. Ver el informe generado en `data/processed/kinetics_short_clips/REPORT.md` y las hipótesis reproducibles en `scripts/estimate_planar_kinetics.py`.
+El piloto usa únicamente seis clips cortos ya disponibles, 90 kg, 1.84 m y un modelo planar con supuestos declarados. No se dispone todavía de BIA, plataformas, calibración 3D ni medidas reales de raqueta. Sus resultados no cumplen este protocolo final. Ver el informe generado en `data/processed/reports/batch__planar_kinetics__report.md` y las hipótesis reproducibles en `scripts/estimate_planar_kinetics.py`.

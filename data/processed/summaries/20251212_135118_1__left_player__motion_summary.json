@@ -1,0 +1,142 @@
+{
+  "player_height_m": 1.84,
+  "anthropometric_torso_fraction": 0.288,
+  "assumed_torso_length_m": 0.52992,
+  "frames": 282,
+  "detection_rate": 1.0,
+  "right_wrist_reliable_rate": 1.0,
+  "body_scale_median_torso_length_px": 127.59593,
+  "height_calibration_median_m_per_px": 0.0041716,
+  "world_height_scale_factor": 1.12248,
+  "pose_confidence": {
+    "mean": 0.94337,
+    "median": 0.94091,
+    "min": 0.89671,
+    "p05": 0.89962,
+    "p95": 0.98839,
+    "p99": 0.9906,
+    "max": 0.99117
+  },
+  "hip_center_height_norm": {
+    "mean": 0.5451,
+    "median": 0.54855,
+    "min": 0.50851,
+    "p05": 0.52153,
+    "p95": 0.5609,
+    "p99": 0.56466,
+    "max": 0.56572
+  },
+  "hip_center_height_calibrated_m": {
+    "mean": 0.9047,
+    "median": 0.90383,
+    "min": 0.72257,
+    "p05": 0.79639,
+    "p95": 0.98442,
+    "p99": 1.03358,
+    "max": 1.05061
+  },
+  "hip_vertical_displacement_norm": 0.05721,
+  "hip_vertical_speed_norm_s": {
+    "mean": 0.05581,
+    "median": 0.03298,
+    "min": 5e-05,
+    "p05": 0.00144,
+    "p95": 0.16578,
+    "p99": 0.19271,
+    "max": 0.19513
+  },
+  "racket_proxy_speed_px_s": {
+    "mean": 308.63173,
+    "median": 207.02803,
+    "min": 5.5748,
+    "p05": 33.21335,
+    "p95": 910.57654,
+    "p99": 1556.68336,
+    "max": 1699.30716
+  },
+  "racket_proxy_speed_torso_lengths_s": {
+    "mean": 2.41882,
+    "median": 1.62253,
+    "min": 0.04369,
+    "p05": 0.2603,
+    "p95": 7.13641,
+    "p99": 12.2001,
+    "max": 13.31788
+  },
+  "racket_proxy_speed_height_calibrated_m_s": {
+    "mean": 1.32845,
+    "median": 0.86284,
+    "min": 0.01991,
+    "p05": 0.13999,
+    "p95": 4.20027,
+    "p99": 6.84844,
+    "max": 7.57593
+  },
+  "racket_proxy_speed_world_est_m_s": {
+    "mean": 1.24565,
+    "median": 0.88476,
+    "min": 0.09419,
+    "p05": 0.26707,
+    "p95": 3.38748,
+    "p99": 5.37445,
+    "max": 6.28535
+  },
+  "racket_proxy_speed_world_height_scaled_m_s": {
+    "mean": 1.39822,
+    "median": 0.99313,
+    "min": 0.10572,
+    "p05": 0.29979,
+    "p95": 3.80237,
+    "p99": 6.03271,
+    "max": 7.05518
+  },
+  "torso_lean_deg": {
+    "mean": 9.07106,
+    "median": 9.16167,
+    "min": -7.73725,
+    "p05": -2.73888,
+    "p95": 24.53981,
+    "p99": 26.02601,
+    "max": 26.92658
+  },
+  "stance_width_torso_units": {
+    "mean": 0.87774,
+    "median": 0.8537,
+    "min": 0.03113,
+    "p05": 0.31742,
+    "p95": 1.44571,
+    "p99": 1.52132,
+    "max": 1.63051
+  },
+  "right_elbow_angle_deg": {
+    "mean": 128.20393,
+    "median": 134.22672,
+    "min": 1.04146,
+    "p05": 28.63624,
+    "p95": 177.60362,
+    "p99": 179.67999,
+    "max": 179.97871
+  },
+  "left_knee_angle_deg": {
+    "mean": 157.86656,
+    "median": 157.94466,
+    "min": 122.74262,
+    "p05": 142.7923,
+    "p95": 175.73405,
+    "p99": 178.53719,
+    "max": 179.21744
+  },
+  "right_knee_angle_deg": {
+    "mean": 162.63155,
+    "median": 164.33757,
+    "min": 133.48492,
+    "p05": 145.14436,
+    "p95": 179.12395,
+    "p99": 179.61577,
+    "max": 179.83159
+  },
+  "semantic_stroke_events": 5,
+  "video": "20251212_135118_1.mp4",
+  "fps": 29.97382,
+  "duration_s": 9.40821
+}

@@ -13,3 +13,11 @@ La anotación cubre dos tramos del clip fácil. El primero contiene un bote y un
 contacto con la raqueta del jugador principal; el segundo incluye un frame que
 el tracker debe predecir y un contacto con el oponente. No pretende medir
 precisión sobre todo el video ni se usa como verdad física 3D.
+
+Las nuevas anotaciones independientes deben validar
+`ball_racket_annotation_schema.json`. La bola se marca en el centro del rastro
+de exposición, conservando además `blur_start_xy`, `blur_end_xy` y una de las
+clases `visible`, `blurred`, `occluded` u `out_of_frame`. Las raquetas usan el
+orden de RacketVision `top`, `bottom`, `handle`, `left`, `right`. Los conjuntos
+de entrenamiento y validación se separan por evento o trayectoria completa,
+nunca por fotogramas aleatorios.

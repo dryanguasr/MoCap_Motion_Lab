@@ -20,12 +20,14 @@ sys.path.insert(0, str(ROOT / "src"))
 from seima_mocap.planar_dynamics import (
     G, local_polynomial, whole_body_wrench, double_support, segment_proximal_wrench,
 )
+from seima_mocap.output_layout import artifact_path, ensure_output_layout
 
 CLIPS = (
     "20251212_132025_1", "20251212_133639_1", "20251212_134838_1",
     "20251212_135118_1", "20251212_135431_1", "20251212_140101_1",
 )
-OUT = ROOT / "data/processed/kinetics_short_clips"
+OUT = ROOT / "data/processed"
+PIPELINE = "planar_kinetics"
 HEIGHT = 1.84
 USED = [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
 CRITICAL = [11, 12, 23, 24, 25, 26, 27, 28]
@@ -83,13 +85,14 @@ def sha256(path):
 
 
 def load_clip(stem):
-    source = ROOT / "data/processed/left_player_batch" / stem
-    matches = list((ROOT / "data").rglob(f"{stem}.mp4"))
-    # There should be a single raw source, never an annotated output.
+    pose_cache = artifact_path(OUT, "arrays", stem, "left_player", "pose_landmarks", ".npz")
+    event_file = artifact_path(OUT, "events", stem, "left_player", "semantic_events", ".csv")
+    matches = list((ROOT / "data/raw").glob(f"{stem}.mp4"))
+    # Search source recordings only, never generated videos.
     if len(matches) != 1:
         raise ValueError(f"Expected one source video for {stem}, got {len(matches)}")
     video = matches[0]
-    with np.load(source / "pose_landmarks.npz") as data:
+    with np.load(pose_cache) as data:
         norm = data["normalized"].copy()
         width, height = int(data["width"]), int(data["height"])
     t = read_timestamps(video, len(norm))
@@ -113,7 +116,7 @@ def load_clip(stem):
         raise ValueError(f"No usable scale reference observations: {stem}")
     scale = HEIGHT * 0.288 / np.median(torso[raw_ok])
     event_times = []
-    with (source / "semantic_events.csv").open(newline="", encoding="utf-8") as stream:
+    with event_file.open(newline="", encoding="utf-8") as stream:
         for row in csv.DictReader(stream):
             # Convert stored peak FRAME to actual timestamp, not old constant-FPS time.
             event_times.append(float(t[int(row["frame_peak"])]))
@@ -125,8 +128,8 @@ def load_clip(stem):
              "near_heuristic_stroke": event_near}
     manifest = {
         "video": str(video.relative_to(ROOT)), "video_sha256": sha256(video),
-        "pose_cache": str((source / "pose_landmarks.npz").relative_to(ROOT)),
-        "pose_cache_sha256": sha256(source / "pose_landmarks.npz"),
+        "pose_cache": str(pose_cache.relative_to(ROOT)),
+        "pose_cache_sha256": sha256(pose_cache),
         "frames": len(t), "last_frame_time_s": float(t[-1]), "timestamp_source": "ffprobe best_effort_timestamp_time",
         "fixed_scale_m_per_px": float(scale), "scale_method": "0.288 * 1.84 / median reliable projected torso pixels",
         "heuristic_stroke_times_s": event_times,
@@ -272,7 +275,7 @@ def write_json(path, data):
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False, allow_nan=False), encoding="utf-8")
 
 
-def draw_clip(stem, baseline, envelope, output):
+def draw_clip(stem, baseline, envelope, output_path):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -297,7 +300,7 @@ def draw_clip(stem, baseline, envelope, output):
     # Preserve rejected starts/ends: matplotlib otherwise crops all-NaN tails.
     axes[-1].set_xlim(0, t[-1])
     axes[-1].set_xlabel("Tiempo real del video (s). Bandas: sensibilidad un-factor-a-la-vez; NO IC estadístico.")
-    fig.savefig(output / "kinetics_diagnostics.png", dpi=150)
+    fig.savefig(output_path, dpi=150)
     plt.close(fig)
 
 
@@ -392,9 +395,9 @@ def write_report(summaries):
         "No se estiman torques de muñeca/codo/hombro en este piloto: la raqueta se incluye solo como masa puntual "
         "para el balance corporal. Faltan orientación/inercia de la raqueta y carga de impacto para un análisis defendible.", "",
         "## Archivos y reproducción", "",
-        "- `batch_summary.csv/json`: resumen; `assumptions.json`: escenarios; `manifest.json`: fuentes, SHA-256 y versiones.",
-        "- Por clip: `frame_kinetics.csv` (unidades en nombres, 0/1 en flags, vacío=sin estimación), "
-        "`sensitivity_envelope.csv`, `scenario_series.npz`, `scenario_summaries.json`, `summary.json` y `kinetics_diagnostics.png`.",
+        "- Nombres: `fuente__planar_kinetics__artefacto.ext`; los agregados usan `batch` como fuente.",
+        "- `summaries/`: resumen por clip, escenarios y resumen de lote; `metadata/`: supuestos y manifiesto.",
+        "- `metrics/`: cinética por frame y envolvente; `arrays/`: series de escenarios; `diagnostics/`: gráficas.",
         "- Los campos `diagnostic` pueden contener hipótesis inadmisibles; no son resultados cinéticos aceptados. "
         "Los campos COM describen el modelo proyectado; `total_force_valid` y `torque_valid` gobiernan la admisión.",
         "- Ejecutar desde la raíz del repositorio: `.venv/Scripts/python scripts/estimate_planar_kinetics.py`. "
@@ -402,27 +405,28 @@ def write_report(summaries):
         "- Tests analíticos en `tests/test_planar_dynamics.py`: balance estático/dinámico, signos, reparto inadmisible "
         "y derivación con timestamps irregulares/huecos. Son controles de implementación, NO validación experimental.", "",
         "Protocolo para datos reales: `docs/PROTOCOLO_ADQUISICION_CINETICA.md`. "
-        "Los datos y resultados locales siguen excluidos de Git por las reglas existentes; no se han subido ni creado commits.", "",
+        "Los artefactos pesados permanecen locales según `.gitignore`; los resúmenes e informes compactos pueden versionarse.", "",
         "## Referencias", "",
         "[OpenSim: entradas y alcance de dinámica inversa](https://opensimconfluence.atlassian.net/wiki/spaces/OpenSim/pages/53090063). "
         "[De Leva: parámetros antropométricos de referencia](https://pubmed.ncbi.nlm.nih.gov/8872282/). "
         "La implementación es un modelo planar propio simplificado, no una ejecución de esos paquetes ni una réplica completa del artículo.", "",
     ])
-    (OUT / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")
+    artifact_path(OUT, "reports", "batch", PIPELINE, "report", ".md").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
 
 
 def main():
-    OUT.mkdir(parents=True, exist_ok=True)
+    ensure_output_layout(OUT)
     assumptions = list(scenarios())
-    write_json(OUT / "assumptions.json", {"height_m": HEIGHT, "scenarios": [asdict(s) for s in assumptions],
+    write_json(artifact_path(OUT, "metadata", "batch", PIPELINE, "assumptions", ".json"),
+               {"height_m": HEIGHT, "scenarios": [asdict(s) for s in assumptions],
                "excluded_video": "20251212_132025.mp4", "excluded_reason": "Long video explicitly excluded by user",
                "scope": "Main player at image left only; anatomical left/right refer to that player's limbs"})
     summaries, all_manifest = [], []
     fields = ["total_Fx_N", "total_Fz_N"] + [j + "_Nm" for j in JOINTS]
     for stem in CLIPS:
         pix, quality, t, scale, flags, manifest = load_clip(stem)
-        output = OUT / stem
-        output.mkdir(exist_ok=True)
         results, scenario_summaries = [], []
         for spec in assumptions:
             result, segment_table = estimate(pix, t, scale, flags, spec)
@@ -442,13 +446,16 @@ def main():
             envelope[f + "_min"] = np.where(valid & (count > 0), minimum, np.nan)
             envelope[f + "_max"] = np.where(valid & (count > 0), maximum, np.nan)
             envelope[f + "_valid_scenarios"] = count
-        write_csv(output / "frame_kinetics.csv", {"frame": np.arange(len(t)), **flags,
+        write_csv(artifact_path(OUT, "metrics", stem, PIPELINE, "frame_kinetics", ".csv"),
+                  {"frame": np.arange(len(t)), **flags,
                   "landmark_quality_min_critical": np.nan_to_num(np.min(quality[:, CRITICAL], axis=1)), **baseline})
-        write_csv(output / "sensitivity_envelope.csv", envelope)
-        np.savez_compressed(output / "scenario_series.npz", time_s=t, scenario_names=np.array([s.name for s in assumptions]),
+        write_csv(artifact_path(OUT, "metrics", stem, PIPELINE, "sensitivity_envelope", ".csv"), envelope)
+        np.savez_compressed(artifact_path(OUT, "arrays", stem, PIPELINE, "scenario_series", ".npz"),
+                            time_s=t, scenario_names=np.array([s.name for s in assumptions]),
                             **{f: np.stack([r[f] for r in results]) for f in fields})
-        write_json(output / "scenario_summaries.json", scenario_summaries)
-        draw_clip(stem, baseline, envelope, output)
+        write_json(artifact_path(OUT, "summaries", stem, PIPELINE, "scenario_summaries", ".json"), scenario_summaries)
+        draw_clip(stem, baseline, envelope,
+                  artifact_path(OUT, "diagnostics", stem, PIPELINE, "kinetics", ".png"))
         summary = {"video": stem + ".mp4", "frames": len(t),
                    "force_frames": int(baseline["total_force_valid"].sum()), "torque_frames": int(baseline["torque_valid"].sum()),
                    "force_coverage_pct": float(100 * baseline["total_force_valid"].mean()),
@@ -461,14 +468,15 @@ def main():
                        stats(baseline["moment_balance_residual_Nm_diagnostic"][baseline["torque_valid"]])}
         summaries.append(summary)
         all_manifest.append(manifest)
-        write_json(output / "summary.json", summary)
+        write_json(artifact_path(OUT, "summaries", stem, PIPELINE, "summary", ".json"), summary)
         print(f"{stem}: force {summary['force_frames']}/{len(t)}, torques {summary['torque_frames']}/{len(t)}", flush=True)
-    write_json(OUT / "manifest.json", {"clips": all_manifest, "script_sha256": sha256(Path(__file__)),
+    write_json(artifact_path(OUT, "metadata", "batch", PIPELINE, "manifest", ".json"),
+        {"clips": all_manifest, "script_sha256": sha256(Path(__file__)),
         "model_sha256": sha256(ROOT / "src/seima_mocap/planar_dynamics.py"),
         "numpy_version": np.__version__, "python_version": sys.version})
-    write_json(OUT / "batch_summary.json", summaries)
+    write_json(artifact_path(OUT, "summaries", "batch", PIPELINE, "summary", ".json"), summaries)
     write_report(summaries)
-    write_csv(OUT / "batch_summary.csv", {
+    write_csv(artifact_path(OUT, "summaries", "batch", PIPELINE, "summary", ".csv"), {
         "video": [s["video"] for s in summaries], "frames": [s["frames"] for s in summaries],
         "force_coverage_pct": [s["force_coverage_pct"] for s in summaries],
         "torque_coverage_pct": [s["torque_coverage_pct"] for s in summaries],

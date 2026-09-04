@@ -122,10 +122,11 @@ Presiona `q` o `ESC` para cerrar.
 seima-mocap --record
 ```
 
-Se crea una carpeta dentro de `data/processed/` con dos archivos:
+Se crean dos archivos en `data/processed/metrics/`, identificados con el nombre
+de sesión y el pipeline `capture`:
 
-- `landmarks.csv`: posiciones y velocidades 3D de los landmarks visibles;
-- `joints.csv`: ángulos geométricos y velocidades angulares.
+- `session_<fecha>__capture__landmarks.csv`: posiciones y velocidades 3D;
+- `session_<fecha>__capture__joints.csv`: ángulos y velocidades angulares.
 
 Los videos crudos y archivos de datos no se versionan por defecto.
 
@@ -150,9 +151,29 @@ python scripts/estimate_planar_kinetics.py
 
 Consulta [`docs/PROTOCOLO_ADQUISICION_CINETICA.md`](docs/PROTOCOLO_ADQUISICION_CINETICA.md)
 para el protocolo propuesto con cámaras calibradas, plataformas de fuerza y
-antropometría. Los resultados de `data/processed/kinetics_short_clips/` son una
-instantánea exploratoria versionada: **no son mediciones de fuerza ni torques
+antropometría. Los resultados se organizan por tipo bajo `data/processed/`; el
+informe está en `data/processed/reports/batch__planar_kinetics__report.md`.
+Son una instantánea exploratoria: **no son mediciones de fuerza ni torques
 anatómicos validados**. Los videos y poses de entrada permanecen excluidos.
+
+El seguimiento de bola dispone también de una canalización multimodal offline:
+combina el detector clásico, BallTrack, pose corporal de ambos jugadores y
+cinco puntos por raqueta. RacketVision se ejecuta en un entorno Python 3.10
+aislado y sus cachés se validan mediante manifiesto y SHA-256:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/setup_racketvision.ps1
+.venv_racketvision\Scripts\python.exe scripts/run_racketvision_worker.py data/raw/CLIP.mp4 data/processed/arrays/CLIP__racketvision__cache.jsonl
+.venv\Scripts\python.exe scripts/process_ball_tracking_real.py CLIP
+```
+
+Si no existe la caché, continúa con el detector clásico y una geometría de baja
+confianza basada en muñeca–antebrazo. Consulta
+[`docs/BALL_TRACKING_REAL.md`](docs/BALL_TRACKING_REAL.md).
+
+Todas las salidas usan el patrón `fuente__pipeline__artefacto.ext`. Consulta
+[`data/processed/README.md`](data/processed/README.md) para la estructura de
+videos, métricas, eventos, datasets, resúmenes, arrays y diagnósticos.
 
 ## Parámetros útiles
 

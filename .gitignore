@@ -4,7 +4,9 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .venv/
+.venv_racketvision/
 venv/
+.cache/
 
 # IDE
 .vscode/
@@ -16,6 +18,7 @@ Thumbs.db
 
 # Models downloaded locally
 models/*.task
+models/racketvision/
 
 # Raw experimental data
 # Keep folder structure but never version source recordings by default.
@@ -27,11 +30,12 @@ data/raw/*
 # etc.). Keep them local and version only compact human-readable summaries.
 data/processed/**
 !data/processed/.gitkeep
-!data/processed/**/
-!data/processed/**/REPORT.md
-!data/processed/**/summary.json
-!data/processed/**/*_summary.json
-!data/processed/**/*_summary.csv
+!data/processed/README.md
+!data/processed/summaries/
+!data/processed/summaries/*.json
+!data/processed/summaries/*.csv
+!data/processed/reports/
+!data/processed/reports/*.md
 
 # Generic video exports
 *.mp4
