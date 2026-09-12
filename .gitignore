@@ -46,3 +46,6 @@ data/processed/**
 # Large/generated numerical artifacts anywhere in the repository
 *.npz
 *.npy
+
+# Local source-bound review sessions contain machine-specific paths and frame maps.
+data/annotations/rallies/**

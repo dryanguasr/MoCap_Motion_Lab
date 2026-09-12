@@ -231,6 +231,15 @@ class ProjectedBallTracker:
         self.ever_initialized = True
         self.seeds.clear()
 
+    def initialize_from_visual_pair(self, first: BallCandidate, second: BallCandidate) -> TrackFrame:
+        """Initialize from two externally associated visual detections, never a manual point."""
+        if not first.observation.timestamp_s < second.observation.timestamp_s:
+            raise ValueError("Visual initialization requires distinct increasing timestamps")
+        self.reset_for_discontinuity()
+        self._initialize(_Seed([first, second], 0.))
+        return TrackFrame(second.observation.timestamp_s, self.status, second.observation.pixel_xy.copy(),
+                          None, self.state, second.observation.confidence, 0, second)
+
     def step(self, timestamp_s: float, candidates: Sequence[BallCandidate], *,
              gate_multiplier: float = 1.0, required_seed_observations: int = 3,
              predicted_velocity_weight: float = .35,

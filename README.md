@@ -171,6 +171,13 @@ Si no existe la caché, continúa con el detector clásico y una geometría de b
 confianza basada en muñeca–antebrazo. Consulta
 [`docs/BALL_TRACKING_REAL.md`](docs/BALL_TRACKING_REAL.md).
 
+Para dividir el video de profesionales por intercambios y recuperar la bola con
+semillas manuales, abre `review_professionals.cmd` y después
+`track_professionals.cmd`. La revisión permite ajustar cortes, validar la mesa por
+toma y aceptar intervalos. El seguimiento se pausa al perder la bola y guarda las
+correcciones para reanudarlas. Consulta
+[`docs/RALLY_MANUAL_RECOVERY.md`](docs/RALLY_MANUAL_RECOVERY.md) para los controles.
+
 Todas las salidas usan el patrón `fuente__pipeline__artefacto.ext`. Consulta
 [`data/processed/README.md`](data/processed/README.md) para la estructura de
 videos, métricas, eventos, datasets, resúmenes, arrays y diagnósticos.

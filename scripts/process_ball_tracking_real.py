@@ -881,7 +881,22 @@ def main():
     parser.add_argument("clips", nargs="*", default=DEFAULT_CLIPS)
     parser.add_argument("--output-root", type=Path, default=ROOT / "data/processed")
     parser.add_argument("--no-overlay", action="store_true")
+    parser.add_argument("--manifest", type=Path, help="Reviewed rally manifest (source-bound assisted pipeline)")
+    parser.add_argument("--interactive", action="store_true", help="Pause and inspect manual recovery episodes")
+    parser.add_argument("--clip-id", action="append", default=[], help="Manifest clip ID; repeat for multiple clips")
+    parser.add_argument("--interventions-dir", type=Path, help="Persist/replay source-bound manual corrections")
+    parser.add_argument("--ffmpeg")
+    parser.add_argument("--ffprobe")
     args = parser.parse_args()
+    if args.manifest is not None:
+        from seima_mocap.rally_pipeline import process_rally_manifest
+        process_rally_manifest(ROOT, args.manifest, args.output_root, clip_ids=args.clip_id,
+                               interactive=args.interactive, journal_root=args.interventions_dir,
+                               make_overlay=not args.no_overlay, ffmpeg=args.ffmpeg, ffprobe=args.ffprobe,
+                               detect_event=detect_event)
+        return
+    if args.interactive or args.clip_id or args.interventions_dir:
+        parser.error("--interactive, --clip-id and --interventions-dir require --manifest")
     ensure_output_layout(args.output_root)
     summaries = [process(stem, args.output_root, not args.no_overlay) for stem in args.clips]
     write_report(args.output_root, summaries)

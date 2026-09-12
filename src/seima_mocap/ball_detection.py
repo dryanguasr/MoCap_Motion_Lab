@@ -131,6 +131,7 @@ def detect_ball_candidates(
     roi_polygon_xy: Sequence[Sequence[float]] | None = None,
     background_gray: np.ndarray | None = None,
     predicted_pixel_xy: np.ndarray | None = None,
+    manual_recovery: bool = False,
 ) -> list[BallCandidate]:
     """Generate zero or more weak visual candidates for the current frame."""
     if previous_bgr.shape != current_bgr.shape or next_bgr.shape != current_bgr.shape:
@@ -145,6 +146,17 @@ def detect_ball_candidates(
         weak_motion = (motion >= 0.65 * config.motion_threshold)
         foreground_support = (foreground >= config.foreground_threshold)
         mask = ((mask > 0) | (weak_motion & foreground_support)).astype(np.uint8) * 255
+    if manual_recovery:
+        if background_gray is None:
+            raise ValueError("Manual recovery detection requires a fixed-shot background")
+        # Screen recordings can repeat an exposure. Requiring a difference from
+        # BOTH neighbours erases the actual ball, leaving neural distractors.
+        # Positive present-frame foreground suppresses the disappeared exposure.
+        motion = cv2.max(cv2.absdiff(gray[1], gray[0]), cv2.absdiff(gray[1], gray[2]))
+        positive = cv2.subtract(gray[1], background_gray)
+        hsv = cv2.cvtColor(current_bgr, cv2.COLOR_BGR2HSV)
+        mask = ((positive >= config.foreground_threshold) & (gray[1] >= 115)
+                & (hsv[..., 1] <= 115) & (motion >= .65*config.motion_threshold)).astype(np.uint8)*255
     mask &= polygon_mask(mask.shape, roi_polygon_xy)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -179,7 +191,7 @@ def detect_ball_candidates(
             continue
         observation = BallObservation(float(timestamp_s), center, confidence,
                                       size_px=float(max(w, h)), blur_vector_px=blur,
-                                      source="temporal_contrast_blob")
+                                      source="manual_guided_visual_blob" if manual_recovery else "temporal_contrast_blob")
         candidates.append(BallCandidate(observation, (x, y, w, h), f["area"], f["circularity"],
                                         f["elongation"], f["intensity"], f["saturation"], f["contrast"],
                                         f["motion"], f["foreground"], reasons))
