@@ -126,6 +126,7 @@ def iter_frames(video: Path, start: int, end: int):
     timestamp = max(0., metadata["pts_s"][start]-1e-6)
     command = [resolve_video_tool("ffmpeg"), "-v", "error", "-seek_timestamp", "1", "-ss", f"{timestamp:.9f}",
                "-i", str(video), "-map", "0:v:0", "-frames:v", str(end-start), "-fps_mode", "passthrough",
+               "-enc_time_base", "1:1000000",
                "-f", "rawvideo", "-pix_fmt", "bgr24", "pipe:1"]
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     size = metadata["width"]*metadata["height"]*3

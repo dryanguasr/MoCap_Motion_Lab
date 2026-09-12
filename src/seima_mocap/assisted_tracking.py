@@ -18,7 +18,7 @@ class ReplayResult:
 
 
 def replay_tracking(times, evidence, models, contexts, scene, params, actions=(), *, stop_on_request=True,
-                    recovery_candidates=None):
+                    recovery_candidates=None, candidate_prior=None):
     if not len(times) == len(evidence) == len(models) == len(contexts):
         raise ValueError("Evidence, contexts and timestamps must have equal coverage")
     physical = ProjectedBallTracker(scene, params, use_physics=True)
@@ -65,6 +65,8 @@ def replay_tracking(times, evidence, models, contexts, scene, params, actions=()
                 visual = list(visual) + list(recovery_candidates(index))
             candidates = fuse_ball_candidates(visual, models[index].ball_candidates, contexts[index],
                                               predicted_xy=recovery.seed.xy)
+            if candidate_prior is not None:
+                candidates = candidate_prior(index, candidates)
             tracked = recovery.step(time, candidates)
             mode = InteractionMode.FREE_FLIGHT
             origin.update(recovery_state=recovery.state, protected=True)
@@ -86,8 +88,9 @@ def replay_tracking(times, evidence, models, contexts, scene, params, actions=()
             visual = evidence[index]
             if manual_priority and recovery_candidates is not None:
                 visual = list(visual) + list(recovery_candidates(index))
+            kwargs = {} if candidate_prior is None else {"candidate_prior": lambda cs: candidate_prior(index, cs)}
             result = interaction.step(time, visual, models[index].ball_candidates,
-                                      contexts[index], anchor=None if manual_priority else baseline)
+                                      contexts[index], anchor=None if manual_priority else baseline, **kwargs)
             tracked, mode = result.track, result.mode
             request = episodes.step(index, tracked)
         tracks.append(tracked)

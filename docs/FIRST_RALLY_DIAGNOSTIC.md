@@ -2,8 +2,9 @@
 
 Estado: el primer intercambio ya se completó con 38 semillas manuales. El
 [diagnóstico técnico y contraste visual](../data/processed/reports/professionals__first_rally_diagnostic.md)
-registra el resultado y la hipótesis de búsqueda guiada por gestos, aún sin
-implementar. El lanzador sigue limitado a este clip para reproducirlo.
+registra el resultado y la hipótesis de búsqueda guiada por gestos. Una primera
+prueba experimental está documentada en [STROKE_GUIDANCE_STAGE1.md](STROKE_GUIDANCE_STAGE1.md).
+El lanzador sigue limitado a este clip y no activa esa variante.
 
 Antes de etiquetar más clips, terminar únicamente `rally_001_part_01` usando
 `track_professionals.cmd`. Sus límites aceptados son [0,481) en el original.
@@ -30,7 +31,7 @@ en `data/processed/summaries`, `metrics` y `videos`. Conservar también el regis
    exactitud. Las etiquetas por sí solas tampoco validan los fotogramas intermedios.
 5. Decidir si merece la pena continuar etiquetando o mejorar primero la asociación.
 
-## Hipótesis del usuario para una siguiente iteración — no implementada
+## Hipótesis del usuario y alcance de la primera prueba
 
 Usar preparación y ejecución del golpe para anticipar la zona frontal del
 jugador y acotar temporalmente la búsqueda. Dentro de esa región, aplicar resta
@@ -48,4 +49,6 @@ representa la posición y mantener esa convención en etiquetas y mediciones.
 Comparación futura en este mismo clip: sistema actual, región guiada por gesto,
 región más resta local, y estimación del extremo con dirección. Usar etiquetas
 reservadas para evaluación para no medir sobre los mismos puntos utilizados al
-ajustar parámetros. No se ha añadido ninguna de estas variantes al seguidor.
+ajustar parámetros. La primera prueba solo añade una ponderación espacial
+opcional de candidatos; la resta local específica y el extremo orientado siguen
+pendientes. No se activa la variante en el flujo habitual.

@@ -181,7 +181,7 @@ class InteractionAwareBallTracker:
 
     def step(self, timestamp_s: float, classical: Sequence[BallCandidate],
              model: Sequence[BallObservation], context: InteractionContext,
-             anchor: TrackFrame | None = None) -> MultimodalTrackFrame:
+             anchor: TrackFrame | None = None, *, candidate_prior=None) -> MultimodalTrackFrame:
         predicted = self.tracker.predict_pixel(timestamp_s)
         reference = predicted
         if reference is None and self.observed_history:
@@ -198,6 +198,8 @@ class InteractionAwareBallTracker:
         event_active = proposed_mode != InteractionMode.FREE_FLIGHT
         contextual = replace(context, mode=proposed_mode)
         candidates = fuse_ball_candidates(classical, model, contextual, predicted, velocity)
+        if candidate_prior is not None:
+            candidates = candidate_prior(candidates)
         by_source: dict[str, int] = {}
         for candidate in candidates:
             for source in candidate.observation.source.split("+"):

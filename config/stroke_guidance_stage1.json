@@ -1,0 +1,18 @@
+{
+  "schema": "seima.stroke-stage1.v1",
+  "pilot": "rally_001_part_01",
+  "baseline_commit": "16bc34c1eec078400f868e0db6a29d7b4d42c223",
+  "variants": ["baseline", "h1_soft_region"],
+  "new_configurations": 1,
+  "stroke_parameters": {},
+  "assistance": "one_original_seed_per_window; no subsequent seeds; continue diagnostically while retaining loss requests",
+  "cases": [
+    {"id": "A", "split": "development", "start": 17, "end": 100, "display_start": 17, "seed_frame": 17, "label_block": [10, 100]},
+    {"id": "B", "split": "development", "start": 265, "end": 310, "display_start": 265, "seed_frame": 265, "label_block": [255, 310]},
+    {"id": "C", "split": "reserved", "start": 298, "end": 390, "display_start": 325, "seed_frame": 298, "label_block": [315, 390]}
+  ],
+  "contact_times": "unverified_hypotheses; human_validation_required",
+  "reserved_policy": "block C labels used only for scoring after runs; seed 298 is strictly before block 315:390; no future seed access",
+  "sampling_caveat": "intervention labels are sparse difficult cases, historically discussed; not a fresh representative test set",
+  "stage1_limit": "no local-contrast ablation, contact-association modification, H2, full pilot or other rallies before manual validation"
+}
