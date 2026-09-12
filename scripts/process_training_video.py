@@ -22,6 +22,7 @@ import mediapipe as mp
 import numpy as np
 
 from seima_mocap.landmarks import LANDMARK_NAMES, POSE_CONNECTIONS, RIGHT_WRIST
+from seima_mocap.output_layout import artifact_path, ensure_output_layout
 
 
 @dataclass
@@ -244,12 +245,12 @@ def _write_summary(path: Path, rows: list[dict], video_info: dict) -> dict:
 
 
 def process(input_path: Path, output_dir: Path, model_path: Path) -> None:
-    output_dir.mkdir(parents=True, exist_ok=True)
+    ensure_output_layout(output_dir)
     stem = input_path.stem
-    silent_path = output_dir / f"{stem}_pose_silent.mp4"
-    output_video = output_dir / f"{stem}_pose_annotated.mp4"
-    csv_path = output_dir / f"{stem}_pose_metrics.csv"
-    summary_path = output_dir / f"{stem}_pose_summary.json"
+    silent_path = artifact_path(output_dir, "videos", stem, "pose", "silent", ".mp4")
+    output_video = artifact_path(output_dir, "videos", stem, "pose", "annotated", ".mp4")
+    csv_path = artifact_path(output_dir, "metrics", stem, "pose", "frame_metrics", ".csv")
+    summary_path = artifact_path(output_dir, "summaries", stem, "pose", "summary", ".json")
 
     cap = cv2.VideoCapture(str(input_path))
     if not cap.isOpened():

@@ -1,0 +1,78 @@
+{
+  "video": {
+    "input": "data\\raw\\VID_20260803_093400281~2.mp4",
+    "output": "data\\processed\\VID_20260803_093400281~2_pose_annotated.mp4",
+    "width": 1920,
+    "height": 1080,
+    "fps": 29.77644,
+    "duration_s": 9.67208
+  },
+  "target_definition": "foreground player with black shirt and red shorts",
+  "selection_logic": {
+    "foreground": "80% apparent pose scale + 20% vertical image position",
+    "temporal": "pose-center distance and apparent-scale continuity",
+    "quality": "mean MediaPipe visibility/presence and landmark completeness"
+  },
+  "confidence_interpretation": "Tracking-quality proxy in [0,1]; not a calibrated probability and not a biomechanical accuracy guarantee.",
+  "frames_total": 288,
+  "frames_target_detected": 288,
+  "target_detection_rate": 1.0,
+  "frames_right_wrist_available": 288,
+  "right_wrist_availability_rate": 1.0,
+  "frames_right_wrist_reliable": 100,
+  "right_wrist_reliable_rate": 0.34722,
+  "target_confidence": {
+    "mean": 0.85417,
+    "median": 0.85337,
+    "min": 0.7359,
+    "p05": 0.80763,
+    "max": 0.95067
+  },
+  "mean_landmark_visibility": {
+    "mean": 0.79999,
+    "median": 0.79542,
+    "min": 0.63013,
+    "p05": 0.71986,
+    "max": 0.94497
+  },
+  "mean_landmark_presence": {
+    "mean": 0.99973,
+    "median": 0.99979,
+    "min": 0.9982,
+    "p05": 0.99935,
+    "max": 0.99998
+  },
+  "right_wrist_visibility": {
+    "mean": 0.33526,
+    "median": 0.14061,
+    "min": 0.00563,
+    "p05": 0.00948,
+    "max": 0.97128
+  },
+  "right_wrist_presence": {
+    "mean": 0.99956,
+    "median": 0.99971,
+    "min": 0.9958,
+    "p05": 0.99868,
+    "max": 1.0
+  },
+  "continuity": {
+    "mean": 0.9853,
+    "median": 0.99147,
+    "min": 0.5268,
+    "p05": 0.96037,
+    "max": 0.99976
+  },
+  "pose_area_fraction": {
+    "mean": 0.10989,
+    "median": 0.10906,
+    "min": 0.03691,
+    "p05": 0.0437,
+    "max": 0.21322
+  },
+  "caveats": [
+    "RIGHT_WRIST is an anatomical proxy correlated with the racket grip; the racket itself is not detected.",
+    "Monocular 3D coordinates are model estimates, not triangulated measurements.",
+    "Occlusion, motion blur, and a rear-facing body can reduce anatomical certainty."
+  ]
+}

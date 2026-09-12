@@ -1,0 +1,65 @@
+{
+  "20251212_132025_1": {
+    "difficulty": "easy_candidate",
+    "roi_polygon_xy": [[170, 300], [1910, 300], [1910, 760], [120, 760]],
+    "table_polygon_xy": [[565, 520], [1810, 520], [1900, 650], [640, 650]],
+    "pixels_per_m_vertical": 250.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "20251212_133639_1": {
+    "difficulty": "strong_secondary_player_occlusion",
+    "roi_polygon_xy": [[170, 280], [1910, 280], [1910, 760], [120, 760]],
+    "table_polygon_xy": [[565, 520], [1810, 520], [1900, 650], [640, 650]],
+    "pixels_per_m_vertical": 250.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "20251212_134838_1": {
+    "difficulty": "strong_secondary_player_occlusion",
+    "roi_polygon_xy": [[170, 280], [1910, 280], [1910, 760], [120, 760]],
+    "table_polygon_xy": [[640, 515], [1800, 515], [1900, 650], [705, 650]],
+    "pixels_per_m_vertical": 250.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "20251212_135118_1": {
+    "difficulty": "strong_secondary_player_occlusion",
+    "roi_polygon_xy": [[170, 280], [1910, 280], [1910, 760], [120, 760]],
+    "table_polygon_xy": [[650, 515], [1810, 515], [1900, 650], [720, 650]],
+    "pixels_per_m_vertical": 250.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "20251212_135431_1": {
+    "difficulty": "strong_secondary_player_occlusion",
+    "roi_polygon_xy": [[170, 280], [1910, 280], [1910, 760], [120, 760]],
+    "table_polygon_xy": [[690, 510], [1810, 510], [1900, 650], [770, 650]],
+    "pixels_per_m_vertical": 250.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "20251212_140101_1": {
+    "difficulty": "motion_blur_and_occlusion",
+    "roi_polygon_xy": [[250, 280], [1910, 280], [1910, 760], [180, 760]],
+    "table_polygon_xy": [[780, 505], [1760, 505], [1910, 675], [840, 675]],
+    "pixels_per_m_vertical": 250.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "VID_20260309_122949450~2": {
+    "difficulty": "wide_view_two_players_foreground_table_occlusion",
+    "roi_polygon_xy": [[70, 340], [1600, 340], [1600, 800], [40, 800]],
+    "table_polygon_xy": [[275, 620], [1205, 615], [1365, 690], [100, 690]],
+    "pixels_per_m_vertical": 210.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "VID_20260803_093400281~2": {
+    "difficulty": "foreground_player_strong_table_occlusion",
+    "roi_polygon_xy": [[650, 300], [1910, 300], [1910, 800], [620, 800]],
+    "table_polygon_xy": [[835, 520], [1190, 520], [1225, 610], [700, 610]],
+    "pixels_per_m_vertical": 215.0,
+    "calibration_status": "manual approximate planar prior; not metric 3D"
+  },
+  "Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia": {
+    "difficulty": "long_professional_session_fixed_camera_fast_ball_and_occlusions",
+    "roi_polygon_xy": [[450, 420], [1840, 420], [1840, 820], [430, 820]],
+    "table_polygon_xy": [[1000, 492], [1710, 502], [1326, 681], [587, 647]],
+    "pixels_per_m_vertical": 285.0,
+    "calibration_status": "model-assisted provisional planar prior; not metric 3D"
+  }
+}

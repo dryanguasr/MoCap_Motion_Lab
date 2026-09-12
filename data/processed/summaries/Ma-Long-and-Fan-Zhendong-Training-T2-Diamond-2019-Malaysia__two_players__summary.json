@@ -1,0 +1,94 @@
+{
+  "video": {
+    "input": "data\\raw\\Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia.mp4",
+    "output": "data\\processed\\videos\\Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia__two_players__annotated.mp4",
+    "width": 2156,
+    "height": 1214,
+    "fps": 46.53844,
+    "frames": 12552,
+    "duration_s": 269.71251
+  },
+  "identity_strategy": "independent overlapping crop per table side plus temporal center/scale continuity",
+  "occlusion_strategy": "retain the last pose for at most 12 frames as a visible prediction",
+  "confidence_interpretation": "quality proxy, not a calibrated probability or biomechanical accuracy",
+  "players": {
+    "left": {
+      "label": "JUGADOR IZQUIERDO",
+      "frames_detected": 11539,
+      "detection_rate": 0.9193,
+      "frames_occluded": 1013,
+      "right_wrist_reliable_frames": 11042,
+      "right_wrist_reliable_rate": 0.8797,
+      "pose_confidence": {
+        "mean": 0.89261,
+        "min": 0.22775,
+        "p05": 0.83334,
+        "median": 0.88553,
+        "max": 0.99858
+      },
+      "upper_body_visibility": {
+        "mean": 0.83031,
+        "min": 0.37827,
+        "p05": 0.74694,
+        "median": 0.8103,
+        "max": 0.9994
+      },
+      "right_wrist_visibility": {
+        "mean": 0.88974,
+        "min": 0.00811,
+        "p05": 0.54784,
+        "median": 0.94725,
+        "max": 0.99953
+      },
+      "continuity": {
+        "mean": 0.9909,
+        "min": 0.0,
+        "p05": 0.9843,
+        "median": 0.99982,
+        "max": 1.0
+      }
+    },
+    "right": {
+      "label": "JUGADOR DERECHO",
+      "frames_detected": 10765,
+      "detection_rate": 0.85763,
+      "frames_occluded": 1787,
+      "right_wrist_reliable_frames": 9037,
+      "right_wrist_reliable_rate": 0.71996,
+      "pose_confidence": {
+        "mean": 0.96243,
+        "min": 0.13277,
+        "p05": 0.86409,
+        "median": 0.98513,
+        "max": 0.99871
+      },
+      "upper_body_visibility": {
+        "mean": 0.94429,
+        "min": 0.19188,
+        "p05": 0.78476,
+        "median": 0.97992,
+        "max": 0.99934
+      },
+      "right_wrist_visibility": {
+        "mean": 0.7968,
+        "min": 0.0088,
+        "p05": 0.08687,
+        "median": 0.93458,
+        "max": 0.99901
+      },
+      "continuity": {
+        "mean": 0.99528,
+        "min": 0.0,
+        "p05": 0.99112,
+        "median": 0.9999,
+        "max": 1.0
+      }
+    }
+  },
+  "caveats": [
+    "RIGHT_WRIST is a racket-grip proxy; the racket itself is not detected.",
+    "Orange wrist markers are low-visibility estimates, not reliable observations.",
+    "The table strongly occludes lower-body landmarks, so upper-body quality is weighted more heavily."
+  ],
+  "audio": "omitted: ffmpeg unavailable"
+}

@@ -1,0 +1,43 @@
+{
+  "video": "data/raw/20251212_132025_1.mp4",
+  "annotation_scope": "sparse manual 2D reference; detector centroids initialized then visually accepted/corrected on full-resolution frames",
+  "points": [
+    {"frame": 82, "x_px": 961.0, "y_px": 464.5, "uncertainty_px": 5, "visibility": "motion_blur"},
+    {"frame": 84, "x_px": 868.5, "y_px": 479.5, "uncertainty_px": 5, "visibility": "motion_blur"},
+    {"frame": 86, "x_px": 778.5, "y_px": 494.0, "uncertainty_px": 5, "visibility": "motion_blur"},
+    {"frame": 88, "x_px": 691.0, "y_px": 523.0, "uncertainty_px": 5, "visibility": "motion_blur"},
+    {"frame": 89, "x_px": 650.0, "y_px": 534.0, "uncertainty_px": 6, "visibility": "table_bounce_blur"},
+    {"frame": 90, "x_px": 617.5, "y_px": 514.5, "uncertainty_px": 5, "visibility": "motion_blur"},
+    {"frame": 92, "x_px": 553.5, "y_px": 491.0, "uncertainty_px": 5, "visibility": "motion_blur"},
+    {"frame": 94, "x_px": 490.5, "y_px": 479.0, "uncertainty_px": 5, "visibility": "motion_blur"},
+    {"frame": 96, "x_px": 427.5, "y_px": 480.5, "uncertainty_px": 8, "visibility": "near_racket"},
+    {"frame": 97, "x_px": 410.0, "y_px": 486.0, "uncertainty_px": 15, "visibility": "partially_occluded_near_racket"},
+    {"frame": 98, "x_px": 499.0, "y_px": 465.0, "uncertainty_px": 8, "visibility": "motion_blur"},
+    {"frame": 99, "x_px": 587.0, "y_px": 452.0, "uncertainty_px": 8, "visibility": "motion_blur"},
+    {"frame": 100, "x_px": 672.5, "y_px": 445.0, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 102, "x_px": 828.5, "y_px": 446.5, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 104, "x_px": 967.5, "y_px": 462.5, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 106, "x_px": 1095.5, "y_px": 496.5, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 108, "x_px": 1214.0, "y_px": 530.5, "uncertainty_px": 7, "visibility": "table_bounce_blur"},
+    {"frame": 109, "x_px": 1279.5, "y_px": 505.0, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 111, "x_px": 1403.0, "y_px": 478.5, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 208, "x_px": 1310.0, "y_px": 493.5, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 210, "x_px": 1446.0, "y_px": 477.5, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 212, "x_px": 1571.0, "y_px": 478.0, "uncertainty_px": 6, "visibility": "motion_blur"},
+    {"frame": 213, "x_px": 1631.0, "y_px": 484.0, "uncertainty_px": 7, "visibility": "motion_blur"},
+    {"frame": 214, "x_px": 1705.0, "y_px": 455.0, "uncertainty_px": 35, "visibility": "near_opponent_racket_uncertain"},
+    {"frame": 215, "x_px": 1727.5, "y_px": 464.5, "uncertainty_px": 15, "visibility": "near_opponent_racket"}
+  ],
+  "events": [
+    {"type": "possible_table_bounce", "frame": 89, "tolerance_frames": 2, "confidence": "manual_probable"},
+    {"type": "possible_racket_contact", "frame": 96, "tolerance_frames": 2, "actor": "main_player", "confidence": "manual_probable"},
+    {"type": "possible_table_bounce", "frame": 108, "tolerance_frames": 2, "confidence": "manual_probable"},
+    {"type": "possible_racket_contact", "frame": 214, "tolerance_frames": 3, "actor": "opponent", "confidence": "manual_uncertain"}
+  ],
+  "flight_segments": [
+    {"name": "incoming_before_bounce", "frames": [82, 84, 86, 88]},
+    {"name": "after_bounce_before_main_contact", "frames": [90, 92, 94, 96]},
+    {"name": "outgoing_after_main_contact", "frames": [100, 102, 104, 106]},
+    {"name": "toward_opponent", "frames": [208, 210, 212, 213]}
+  ]
+}
