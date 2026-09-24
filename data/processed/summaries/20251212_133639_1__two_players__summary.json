@@ -1,0 +1,94 @@
+{
+  "video": {
+    "input": "data\\raw\\20251212_133639_1.mp4",
+    "output": "data\\processed\\videos\\20251212_133639_1__two_players__annotated.mp4",
+    "width": 1920,
+    "height": 1080,
+    "fps": 29.94416,
+    "frames": 269,
+    "duration_s": 8.98339
+  },
+  "identity_strategy": "independent overlapping crop per table side plus temporal center/scale continuity",
+  "occlusion_strategy": "retain the last pose for at most 12 frames as a visible prediction",
+  "confidence_interpretation": "quality proxy, not a calibrated probability or biomechanical accuracy",
+  "players": {
+    "left": {
+      "label": "JUGADOR IZQUIERDO (NEGRO)",
+      "frames_detected": 269,
+      "detection_rate": 1.0,
+      "frames_occluded": 0,
+      "right_wrist_reliable_frames": 269,
+      "right_wrist_reliable_rate": 1.0,
+      "pose_confidence": {
+        "mean": 0.93016,
+        "min": 0.87255,
+        "p05": 0.87287,
+        "median": 0.92951,
+        "max": 0.9892
+      },
+      "upper_body_visibility": {
+        "mean": 0.8782,
+        "min": 0.79552,
+        "p05": 0.79812,
+        "median": 0.87186,
+        "max": 0.98297
+      },
+      "right_wrist_visibility": {
+        "mean": 0.9829,
+        "min": 0.64559,
+        "p05": 0.97237,
+        "median": 0.98901,
+        "max": 0.996
+      },
+      "continuity": {
+        "mean": 0.99948,
+        "min": 0.99108,
+        "p05": 0.99811,
+        "median": 0.99978,
+        "max": 1.0
+      }
+    },
+    "right": {
+      "label": "JUGADOR DERECHO (ROJO)",
+      "frames_detected": 269,
+      "detection_rate": 1.0,
+      "frames_occluded": 0,
+      "right_wrist_reliable_frames": 209,
+      "right_wrist_reliable_rate": 0.77695,
+      "pose_confidence": {
+        "mean": 0.89072,
+        "min": 0.80776,
+        "p05": 0.82722,
+        "median": 0.8969,
+        "max": 0.95195
+      },
+      "upper_body_visibility": {
+        "mean": 0.91041,
+        "min": 0.7897,
+        "p05": 0.79919,
+        "median": 0.92564,
+        "max": 0.98556
+      },
+      "right_wrist_visibility": {
+        "mean": 0.67142,
+        "min": 0.18717,
+        "p05": 0.21773,
+        "median": 0.75319,
+        "max": 0.95777
+      },
+      "continuity": {
+        "mean": 0.99683,
+        "min": 0.82758,
+        "p05": 0.98666,
+        "median": 0.99973,
+        "max": 1.0
+      }
+    }
+  },
+  "caveats": [
+    "RIGHT_WRIST is a racket-grip proxy; the racket itself is not detected.",
+    "Orange wrist markers are low-visibility estimates, not reliable observations.",
+    "The table strongly occludes lower-body landmarks, so upper-body quality is weighted more heavily."
+  ],
+  "audio": "omitted: ffmpeg unavailable"
+}

@@ -1,0 +1,123 @@
+{
+  "schema_version": "seima.table-geometry.v1",
+  "video": "data\\raw\\Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia.mp4",
+  "video_sha256": "a974ff1d86a2ee40fa43f401690e9b0e49e03e09e2029756fb5db71b025dedf5",
+  "source": {
+    "method": "manual_on_temporal_median",
+    "sampled_frames": [
+      0,
+      627,
+      1255,
+      1882,
+      2510,
+      3138,
+      3765,
+      4393,
+      5020,
+      5648,
+      6276,
+      6903,
+      7531,
+      8158,
+      8786,
+      9414,
+      10041,
+      10669,
+      11296,
+      11924,
+      12552
+    ]
+  },
+  "table_surface": {
+    "point_order": [
+      "far_left",
+      "far_right",
+      "near_right",
+      "near_left"
+    ],
+    "points": [
+      {
+        "name": "far_left",
+        "xy": [
+          1034.88,
+          609.84
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "far_right",
+        "xy": [
+          1501.5,
+          629.86
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "near_right",
+        "xy": [
+          1265.88,
+          720.72
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "near_left",
+        "xy": [
+          620.62,
+          685.3
+        ],
+        "visibility": "visible"
+      }
+    ],
+    "dimensions_m": {
+      "length": 2.74,
+      "width": 1.525
+    }
+  },
+  "net": {
+    "point_order": [
+      "top_left",
+      "top_right",
+      "base_right",
+      "base_left"
+    ],
+    "points": [
+      {
+        "name": "top_left",
+        "xy": [
+          814.66,
+          585.2
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "top_right",
+        "xy": [
+          1467.62,
+          609.84
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "base_right",
+        "xy": [
+          1467.62,
+          665.28
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "base_left",
+        "xy": [
+          816.2,
+          634.48
+        ],
+        "visibility": "visible"
+      }
+    ],
+    "nominal_height_m": 0.1525
+  },
+  "review": {
+    "status": "manual_confirmed"
+  }
+}

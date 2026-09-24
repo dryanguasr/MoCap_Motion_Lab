@@ -1,0 +1,334 @@
+{
+  "scope": "real-video exploratory projected tracking; not ground truth validation",
+  "video": "data\\raw\\20251212_134838_1.mp4",
+  "difficulty": "strong_secondary_player_occlusion",
+  "frames": 214,
+  "duration_s": 7.131397040498443,
+  "timestamp_source": "FALLBACK_frame_index_over_container_fps",
+  "timing_fallback_used": true,
+  "detector_isolated": {
+    "frames_with_candidates": 212,
+    "coverage_pct": 99.06542056074767,
+    "warning": "coverage includes visual distractors and is not track accuracy"
+  },
+  "racketvision_observations": {
+    "balltrack_frames_with_candidates": 195,
+    "raw_frames_with_racket_detections": 195,
+    "raw_racket_instances": 270
+  },
+  "racket_tracks": {
+    "left": {
+      "UNINITIALIZED": 0,
+      "OBSERVED": 170,
+      "PREDICTED": 42,
+      "LOST": 2
+    },
+    "right": {
+      "UNINITIALIZED": 0,
+      "OBSERVED": 85,
+      "PREDICTED": 129,
+      "LOST": 0
+    }
+  },
+  "temporal_constant_velocity": {
+    "state_counts": {
+      "UNINITIALIZED": 3,
+      "OBSERVED": 125,
+      "PREDICTED": 50,
+      "LOST": 36
+    },
+    "track_coverage_pct": 81.77570093457943
+  },
+  "physics_informed_projected": {
+    "state_counts": {
+      "UNINITIALIZED": 3,
+      "OBSERVED": 138,
+      "PREDICTED": 31,
+      "LOST": 42
+    },
+    "observed_frames": 138,
+    "predicted_frames": 31,
+    "track_coverage_pct": 78.97196261682242,
+    "observed_fraction_within_track_pct": 81.65680473372781,
+    "loss_transitions": 13
+  },
+  "multimodal": {
+    "state_counts": {
+      "UNINITIALIZED": 3,
+      "OBSERVED": 182,
+      "PREDICTED": 18,
+      "LOST": 11
+    },
+    "track_coverage_pct": 93.45794392523365,
+    "interaction_mode_counts": {
+      "FREE_FLIGHT": 147,
+      "BOUNCE_PENDING": 21,
+      "CONTACT_PENDING": 7,
+      "POST_EVENT": 39
+    },
+    "offline_smoothing_corrections": 2,
+    "racketvision_source": "data\\processed\\arrays\\20251212_134838_1__racketvision__cache.jsonl",
+    "body_pose_source": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\arrays\\20251212_134838_1__two_players__pose_landmarks.npz"
+  },
+  "ablation": {
+    "baseline_classical_physics": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 138,
+        "PREDICTED": 31,
+        "LOST": 42
+      },
+      "track_coverage_pct": 78.97196261682242,
+      "lost_frames": 42
+    },
+    "balltrack_model": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 161,
+        "PREDICTED": 35,
+        "LOST": 15
+      },
+      "track_coverage_pct": 91.58878504672897,
+      "lost_frames": 15,
+      "smoothing_corrections": 0
+    },
+    "body_context": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 161,
+        "PREDICTED": 35,
+        "LOST": 15
+      },
+      "track_coverage_pct": 91.58878504672897,
+      "lost_frames": 15,
+      "smoothing_corrections": 0
+    },
+    "bounce_hypothesis": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 176,
+        "PREDICTED": 24,
+        "LOST": 11
+      },
+      "track_coverage_pct": 93.45794392523365,
+      "lost_frames": 11,
+      "smoothing_corrections": 5
+    },
+    "racket_priors": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 166,
+        "PREDICTED": 30,
+        "LOST": 15
+      },
+      "track_coverage_pct": 91.58878504672897,
+      "lost_frames": 15,
+      "smoothing_corrections": 2
+    },
+    "full_multimodal": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 182,
+        "PREDICTED": 18,
+        "LOST": 11
+      },
+      "track_coverage_pct": 93.45794392523365,
+      "lost_frames": 11,
+      "smoothing_corrections": 2
+    }
+  },
+  "acceptance": {
+    "lost_frame_reduction_pct": 73.80952380952381,
+    "lost_frame_reduction_target_pct": 30,
+    "lost_frame_reduction_pass": true,
+    "annotated_event_recovery_within_2_frames_pct": null,
+    "event_recovery_target_pct": 80,
+    "event_recovery_pass": null,
+    "outside_event_precision_delta_percentage_points": 0,
+    "outside_event_precision_pass": true,
+    "common_visible_localization": "unchanged by construction: valid classical observations anchor the multimodal tracker",
+    "racket_player_association_accuracy": "not evaluable until independent five-keypoint racket annotations exist",
+    "racket_finetuning_decision": "deferred; pretrained recall cannot be measured from current annotations"
+  },
+  "events": {
+    "possible_racket_contacts": 5,
+    "possible_table_bounces": 2
+  },
+  "outgoing_strokes": [
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 1.8079598130841121,
+      "frame": 54,
+      "x_px": 646.0,
+      "y_px": 478.5,
+      "confidence": 0.6187291247791256,
+      "actor": "left",
+      "racket_distance_px": 61.601092409076436,
+      "closing_speed_px_s": 699.5541213109378,
+      "trajectory_velocity_change_px_s": 897.5685942158469,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 4,
+      "predicted_outgoing_frames": 0,
+      "ball_speed_px_s": 1137.0894257101133,
+      "direction_image_deg": -5.426063377455731,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 733.0657273083642,
+      "right_elbow_angle_deg": 130.89703863653634,
+      "right_elbow_angular_speed_deg_s": -432.13409237900896
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 2.778901194184839,
+      "frame": 83,
+      "x_px": 1314.375,
+      "y_px": 487.5,
+      "confidence": 0.8107431595751815,
+      "actor": "right",
+      "racket_distance_px": 6.0865742056754675,
+      "closing_speed_px_s": 929.1005494448677,
+      "trajectory_velocity_change_px_s": 1664.7347098913494,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 7,
+      "predicted_outgoing_frames": 0,
+      "ball_speed_px_s": 1384.896008804822,
+      "direction_image_deg": -172.60949923158435,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 242.82630003135515,
+      "right_elbow_angle_deg": 135.87125373047874,
+      "right_elbow_angular_speed_deg_s": -74.1535296092245
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 3.2811122533748702,
+      "frame": 98,
+      "x_px": 548.5,
+      "y_px": 468.5,
+      "confidence": 0.6927529572308627,
+      "actor": "left",
+      "racket_distance_px": 66.95999393500742,
+      "closing_speed_px_s": 1862.306746087978,
+      "trajectory_velocity_change_px_s": 2001.6973892617284,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 2,
+      "predicted_outgoing_frames": 2,
+      "ball_speed_px_s": 1583.2815353057385,
+      "direction_image_deg": -1.08092418666073,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 598.4376147260335,
+      "right_elbow_angle_deg": 124.2010902660049,
+      "right_elbow_angular_speed_deg_s": 253.52491269386974
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 4.486418795430946,
+      "frame": 134,
+      "x_px": 397.5,
+      "y_px": 423.0,
+      "confidence": 0.7217797676933624,
+      "actor": "left",
+      "racket_distance_px": 55.99430998250753,
+      "closing_speed_px_s": 1407.0978959379745,
+      "trajectory_velocity_change_px_s": 2038.0889390358807,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 5,
+      "predicted_outgoing_frames": 0,
+      "ball_speed_px_s": 2182.07307240796,
+      "direction_image_deg": -0.27005171307808556,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 1050.9578676591577,
+      "right_elbow_angle_deg": 95.25003304193216,
+      "right_elbow_angular_speed_deg_s": 65.62105582083859
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 6.260897871235722,
+      "frame": 187,
+      "x_px": 1653.75,
+      "y_px": 461.25,
+      "confidence": 0.5250201862477664,
+      "actor": "right",
+      "racket_distance_px": 115.40179488487063,
+      "closing_speed_px_s": 1524.7675643335385,
+      "trajectory_velocity_change_px_s": 1039.44346258057,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 3,
+      "predicted_outgoing_frames": 1,
+      "ball_speed_px_s": 2165.952011611919,
+      "direction_image_deg": -169.27114070199,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 296.0355184208101,
+      "right_elbow_angle_deg": 170.018684243059,
+      "right_elbow_angular_speed_deg_s": 287.4573251685947
+    }
+  ],
+  "manual_validation": {
+    "available": false
+  },
+  "flight_model_comparison": {
+    "available": false,
+    "conclusion": "spin_not_identifiable"
+  },
+  "player_kinematics_source": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\arrays\\20251212_134838_1__two_players__pose_landmarks.npz",
+  "geometry": {
+    "table_corners_px": [
+      [
+        586.97,
+        517.03
+      ],
+      [
+        1210.97,
+        518.4
+      ],
+      [
+        1419.43,
+        538.97
+      ],
+      [
+        582.86,
+        537.6
+      ]
+    ],
+    "net_polygon_px": [
+      [
+        920.23,
+        482.74
+      ],
+      [
+        1032.69,
+        490.97
+      ],
+      [
+        1029.94,
+        543.09
+      ],
+      [
+        922.97,
+        518.4
+      ]
+    ],
+    "source": "data\\annotations\\table_geometry\\20251212_134838_1__table_geometry.json",
+    "table_length_m_prior": 2.74,
+    "pixels_per_m_vertical_prior": 250.0,
+    "status": "manual fixed-camera surface and net annotation"
+  },
+  "identifiability": {
+    "ball_speed_px_s": "estimated when >=2 post-contact observations",
+    "metric_ball_speed_m_s": "not identifiable from current monocular approximate calibration",
+    "spin": "spin_not_identifiable",
+    "magnus_used": false
+  },
+  "limitations": [
+    "candidate coverage is not precision",
+    "table geometry remains approximate until its annotation JSON is manually confirmed",
+    "single view does not recover depth",
+    "30 fps undersamples fast ball flight",
+    "events are hypotheses, not verified contacts",
+    "foreground includes moving players",
+    "racket wrist-forearm proxies are explicitly lower confidence than RacketVision detections"
+  ]
+}

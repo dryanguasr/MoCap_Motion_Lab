@@ -1,0 +1,12 @@
+{
+  "motion_threshold": 14.0,
+  "foreground_threshold": 18.0,
+  "min_area_px": 3.0,
+  "max_area_px": 1800.0,
+  "min_dimension_px": 2,
+  "max_dimension_px": 90,
+  "target_area_px": 60.0,
+  "max_candidates": 100,
+  "min_confidence": 0.12,
+  "prediction_sigma_px": 80.0
+}

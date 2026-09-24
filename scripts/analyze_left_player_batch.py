@@ -16,6 +16,7 @@ import mediapipe as mp
 import numpy as np
 
 from seima_mocap.landmarks import POSE_CONNECTIONS, RIGHT_WRIST
+from seima_mocap.output_layout import artifact_path, ensure_output_layout
 
 
 UPPER = np.array([0, 11, 12, 13, 14, 15, 16, 23, 24])
@@ -526,19 +527,19 @@ def flatten_summary(video_name: str, duration_s: float, summary: dict) -> dict:
 
 
 def process_batch(
-    inputs: list[Path], output_root: Path, model_path: Path, player_height_m: float
+    inputs: list[Path], output_root: Path, model_path: Path, player_height_m: float,
+    pipeline: str = "left_player",
 ) -> None:
-    output_root.mkdir(parents=True, exist_ok=True)
+    ensure_output_layout(output_root)
     batch_rows: list[dict] = []
     all_events: list[dict] = []
     per_video: dict[str, dict] = {}
     for number, video_path in enumerate(inputs, start=1):
         print(f"[{number}/{len(inputs)}] {video_path.name}", flush=True)
-        video_dir = output_root / video_path.stem
-        video_dir.mkdir(parents=True, exist_ok=True)
+        stem = video_path.stem
         info, norm, world = extract_pose(video_path, model_path)
         np.savez_compressed(
-            video_dir / "pose_landmarks.npz",
+            artifact_path(output_root, "arrays", stem, pipeline, "pose_landmarks", ".npz"),
             normalized=norm,
             world=world,
             fps=info["fps"],
@@ -552,9 +553,9 @@ def process_batch(
             "fps": round(info["fps"], 5),
             "duration_s": round(duration_s, 5),
         })
-        write_csv(video_dir / "frame_metrics.csv", rows)
-        write_csv(video_dir / "semantic_events.csv", events)
-        (video_dir / "motion_summary.json").write_text(
+        write_csv(artifact_path(output_root, "metrics", stem, pipeline, "frame_metrics", ".csv"), rows)
+        write_csv(artifact_path(output_root, "events", stem, pipeline, "semantic_events", ".csv"), events)
+        artifact_path(output_root, "summaries", stem, pipeline, "motion_summary", ".json").write_text(
             json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8"
         )
         for event in events:
@@ -563,8 +564,8 @@ def process_batch(
         per_video[video_path.name] = summary
         draw_annotated_video(
             video_path,
-            video_dir / "left_player_motion_annotated.mp4",
-            video_dir / "left_player_motion_silent.mp4",
+            artifact_path(output_root, "videos", stem, pipeline, "annotated", ".mp4"),
+            artifact_path(output_root, "videos", stem, pipeline, "silent", ".mp4"),
             norm,
             rows,
         )
@@ -573,8 +574,8 @@ def process_batch(
             f"wrist={summary['right_wrist_reliable_rate']:.3f}, events={len(events)}",
             flush=True,
         )
-    write_csv(output_root / "batch_motion_summary.csv", batch_rows)
-    write_csv(output_root / "semantic_events_all_videos.csv", all_events)
+    write_csv(artifact_path(output_root, "summaries", "batch", pipeline, "motion_summary", ".csv"), batch_rows)
+    write_csv(artifact_path(output_root, "events", "batch", pipeline, "semantic_events", ".csv"), all_events)
     report = {
         "scope": "left/main player only; right/secondary player intentionally excluded",
         "player_height_m": player_height_m,
@@ -597,7 +598,7 @@ def process_batch(
         ],
         "per_video": per_video,
     }
-    (output_root / "batch_analysis.json").write_text(
+    artifact_path(output_root, "metadata", "batch", pipeline, "analysis", ".json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
     )
 
@@ -605,11 +606,13 @@ def process_batch(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("inputs", nargs="+", type=Path)
-    parser.add_argument("--output-root", type=Path, default=Path("data/processed/left_player_batch"))
+    parser.add_argument("--output-root", type=Path, default=Path("data/processed"))
+    parser.add_argument("--pipeline", default="left_player",
+                        help="Filename namespace, e.g. left_player or height_calibration")
     parser.add_argument("--model", type=Path, default=Path("models/pose_landmarker_full.task"))
     parser.add_argument("--player-height-m", type=float, default=1.84)
     args = parser.parse_args()
-    process_batch(args.inputs, args.output_root, args.model, args.player_height_m)
+    process_batch(args.inputs, args.output_root, args.model, args.player_height_m, args.pipeline)
 
 
 if __name__ == "__main__":

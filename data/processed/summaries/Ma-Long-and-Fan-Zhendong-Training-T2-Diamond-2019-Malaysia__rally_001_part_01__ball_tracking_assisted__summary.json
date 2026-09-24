@@ -1,0 +1,67 @@
+{
+  "identity": {
+    "source_sha256": "a974ff1d86a2ee40fa43f401690e9b0e49e03e09e2029756fb5db71b025dedf5",
+    "clip_id": "rally_001_part_01",
+    "frame_range": [
+      0,
+      481
+    ],
+    "geometry_sha256": "8523c4c544769f505bcaf71ab1235ec7336568602a0d7e35760d39535fcb4d7a",
+    "caches": {
+      "racketvision": "15ed10860a46a4d961da11c0d9434c7bd10b31f1755cb29c84ccd1ad71b224b0",
+      "poses": "eda619d64e3cafae10ec0cba7e2aec208fdbfdd386d1216c37de7f3a3b322afa"
+    },
+    "time_map_sha256": "dd0eec30ca572b0520dd2d98766061cc51e3cca0ce0e71ec819e95fdc3f7074c"
+  },
+  "status": "completed",
+  "geometry_provenance": {
+    "status": "inferred_assistant_visual_checked",
+    "checked_frames": [
+      0,
+      607,
+      1215
+    ],
+    "human_confirmed": false,
+    "scope": "same_camera_reuse_checked_at_start_middle_end",
+    "note": "Approximate existing user points retained. No new manually clicked measurements.",
+    "evidence": {
+      "path": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\diagnostics\\geometry_repair\\wide_a_geometry_check.jpg",
+      "sha256": "9c53d26ecfcc534d9ee9151b2b46558a4978323488a4d266b7dddaf701cc3767"
+    }
+  },
+  "frames_processed": 481,
+  "source_frames_expected": 481,
+  "ended_by_user": false,
+  "manual_interventions": 38,
+  "manual_visible_seeds": 38,
+  "manual_estimated_seeds": 0,
+  "confirmed_recoveries": 38,
+  "automatic_observation_frames": 359,
+  "predicted_frames": 15,
+  "lost_frames": 101,
+  "pending_inspections": [],
+  "journal": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\annotations\\rallies\\interventions\\rally_001_part_01.json",
+  "frame_metrics": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\metrics\\Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia__rally_001_part_01__ball_tracking_assisted__frames.csv",
+  "visual_identity_validation": "pending_human_review",
+  "cache_provenance": {
+    "racketvision": {
+      "path": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\arrays\\Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia__racketvision__cache.jsonl",
+      "sha256": "15ed10860a46a4d961da11c0d9434c7bd10b31f1755cb29c84ccd1ad71b224b0",
+      "manifest_sha256": "db638fae73738e1322c1515edd26689b93ed9248a7c20b89698e6e9509dc000f",
+      "frames": 12552,
+      "provenance": "source_video_sha256",
+      "clock": "legacy_frame_over_container_fps; replaced_by_source_pts_via_contiguous_frame_index",
+      "max_original_clock_error_s": 0.616948012883153
+    },
+    "poses": {
+      "path": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\arrays\\Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia__two_players__pose_landmarks.npz",
+      "sha256": "eda619d64e3cafae10ec0cba7e2aec208fdbfdd386d1216c37de7f3a3b322afa",
+      "frames": 12552,
+      "provenance": "legacy_source_path_dimensions_count; bound_to_video_hash_at_preparation",
+      "summary_path": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\summaries\\Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia__two_players__summary.json",
+      "summary_sha256": "5f5080c46c718d5ad788bba54e7295198931399c3e9fb446358d82f314dc1588"
+    }
+  },
+  "timestamp_source": "ffprobe_best_effort_timestamp_time",
+  "overlay": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\videos\\Ma-Long-and-Fan-Zhendong-Training-T2-Diamond-2019-Malaysia__rally_001_part_01__ball_tracking_assisted__diagnostic.mp4"
+}

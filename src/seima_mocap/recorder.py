@@ -11,14 +11,14 @@ from .landmarks import LANDMARK_NAMES
 
 
 class SessionRecorder:
-    def __init__(self, session_dir: Path):
+    def __init__(self, session_dir: Path, filename_prefix: str = "session__capture"):
         self.session_dir = Path(session_dir)
         self.session_dir.mkdir(parents=True, exist_ok=True)
 
-        self._landmark_file = (self.session_dir / "landmarks.csv").open(
+        self._landmark_file = (self.session_dir / f"{filename_prefix}__landmarks.csv").open(
             "w", newline="", encoding="utf-8"
         )
-        self._joint_file = (self.session_dir / "joints.csv").open(
+        self._joint_file = (self.session_dir / f"{filename_prefix}__joints.csv").open(
             "w", newline="", encoding="utf-8"
         )
 

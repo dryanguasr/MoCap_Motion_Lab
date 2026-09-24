@@ -43,7 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--record",
         action="store_true",
-        help="Record landmark and joint data to data/processed/.",
+        help="Record landmark and joint data to data/processed/metrics/.",
     )
     return parser
 
@@ -147,7 +147,7 @@ def run(args: argparse.Namespace) -> None:
     recorder = None
     if args.record:
         session_name = datetime.now().strftime("session_%Y%m%d_%H%M%S")
-        recorder = SessionRecorder(Path("data/processed") / session_name)
+        recorder = SessionRecorder(Path("data/processed/metrics"), f"{session_name}__capture")
         print(f"Recording session to: {recorder.session_dir}")
 
     start = time.perf_counter()

@@ -1,0 +1,30 @@
+{
+  "schema_version": "seima.racketvision-cache.v1",
+  "upstream_repository": "https://github.com/OrcustD/RacketVision.git",
+  "upstream_commit": "c44af2a08524d3cb54d818f19686f4cdea4d2793",
+  "model_repository": "linfeng302/RacketVision-Models",
+  "python": "3.10",
+  "device_default": "cuda:0",
+  "cpu_fallback": true,
+  "mixed_precision_on_cuda": true,
+  "batch_size": 1,
+  "ball_heatmap_thresholds": [0.5, 0.35, 0.2],
+  "racket_bbox_threshold": 0.3,
+  "checkpoints": {
+    "balltrack": {
+      "filename": "balltrack_best.pth",
+      "bytes": 46585585,
+      "sha256": "00d707b9db7a49561c411e4765956e79bcd7c7e20c7a0a535073440b3e972342"
+    },
+    "racket_detector": {
+      "filename": "epoch_300.pth",
+      "bytes": 411293859,
+      "sha256": "e6ad74371259d844b11529a64b09052edaec4277ce9ebeeca64d77b9131a19cd"
+    },
+    "racket_pose": {
+      "filename": "best_PCK_epoch_90.pth",
+      "bytes": 106524759,
+      "sha256": "faab22d4c8753759a6c6d4b48241e97b560f5a1b4374ba5cd4074932801a51e2"
+    }
+  }
+}

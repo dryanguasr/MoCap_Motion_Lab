@@ -1,0 +1,20 @@
+{
+  "video": "data/raw/20251212_140101_1.mp4",
+  "annotation_scope": "small hard-clip manual 2D segment; detector centroids initialized then visually accepted/corrected",
+  "points": [
+    {"frame": 177, "x_px": 952.5, "y_px": 415.5, "uncertainty_px": 7, "visibility": "motion_blur"},
+    {"frame": 178, "x_px": 1028.5, "y_px": 413.5, "uncertainty_px": 7, "visibility": "motion_blur"},
+    {"frame": 179, "x_px": 1101.5, "y_px": 414.0, "uncertainty_px": 7, "visibility": "motion_blur"},
+    {"frame": 180, "x_px": 1167.5, "y_px": 421.0, "uncertainty_px": 7, "visibility": "motion_blur"},
+    {"frame": 181, "x_px": 1230.5, "y_px": 430.5, "uncertainty_px": 7, "visibility": "motion_blur"},
+    {"frame": 182, "x_px": 1289.5, "y_px": 443.0, "uncertainty_px": 7, "visibility": "motion_blur"},
+    {"frame": 183, "x_px": 1346.0, "y_px": 458.0, "uncertainty_px": 7, "visibility": "motion_blur"},
+    {"frame": 184, "x_px": 1398.0, "y_px": 476.0, "uncertainty_px": 8, "visibility": "motion_blur"},
+    {"frame": 185, "x_px": 1444.0, "y_px": 493.0, "uncertainty_px": 8, "visibility": "motion_blur"},
+    {"frame": 186, "x_px": 1491.5, "y_px": 517.5, "uncertainty_px": 10, "visibility": "motion_blur_near_table"}
+  ],
+  "events": [],
+  "flight_segments": [
+    {"name": "blurred_flight", "frames": [177, 178, 179, 180, 181, 182, 183, 184, 185]}
+  ]
+}

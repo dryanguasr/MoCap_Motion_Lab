@@ -1,0 +1,123 @@
+{
+  "schema_version": "seima.table-geometry.v1",
+  "video": "data\\raw\\VID_20260803_093400281~2.mp4",
+  "video_sha256": "97056bad3412af77363c32d26cda48a8abe57d0de0b1399efbafee7124f80a58",
+  "source": {
+    "method": "manual_on_temporal_median",
+    "sampled_frames": [
+      0,
+      14,
+      28,
+      43,
+      57,
+      71,
+      86,
+      100,
+      114,
+      129,
+      143,
+      157,
+      172,
+      186,
+      200,
+      215,
+      229,
+      243,
+      258,
+      272,
+      287
+    ]
+  },
+  "table_surface": {
+    "point_order": [
+      "far_left",
+      "far_right",
+      "near_right",
+      "near_left"
+    ],
+    "points": [
+      {
+        "name": "far_left",
+        "xy": [
+          910.63,
+          545.83
+        ],
+        "visibility": "estimated_occluded"
+      },
+      {
+        "name": "far_right",
+        "xy": [
+          1477.03,
+          556.8
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "near_right",
+        "xy": [
+          1160.23,
+          576.0
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "near_left",
+        "xy": [
+          685.71,
+          558.17
+        ],
+        "visibility": "visible"
+      }
+    ],
+    "dimensions_m": {
+      "length": 2.74,
+      "width": 1.525
+    }
+  },
+  "net": {
+    "point_order": [
+      "top_left",
+      "top_right",
+      "base_right",
+      "base_left"
+    ],
+    "points": [
+      {
+        "name": "top_left",
+        "xy": [
+          837.94,
+          518.4
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "top_right",
+        "xy": [
+          1202.74,
+          514.29
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "base_right",
+        "xy": [
+          1201.37,
+          551.31
+        ],
+        "visibility": "visible"
+      },
+      {
+        "name": "base_left",
+        "xy": [
+          837.94,
+          569.14
+        ],
+        "visibility": "visible"
+      }
+    ],
+    "nominal_height_m": 0.1525
+  },
+  "review": {
+    "status": "manual_confirmed"
+  }
+}

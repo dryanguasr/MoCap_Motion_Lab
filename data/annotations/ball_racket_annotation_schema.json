@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SEIMA ball-racket interaction annotations",
+  "type": "object",
+  "required": ["video", "points", "events", "rackets"],
+  "properties": {
+    "video": {"type": "string"},
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["frame", "x_px", "y_px", "visibility"],
+        "properties": {
+          "frame": {"type": "integer", "minimum": 0},
+          "x_px": {"type": "number"},
+          "y_px": {"type": "number"},
+          "blur_start_xy": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+          "blur_end_xy": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+          "visibility": {"enum": ["visible", "blurred", "occluded", "out_of_frame"]},
+          "uncertainty_px": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "frame", "tolerance_frames"],
+        "properties": {
+          "type": {"enum": ["possible_table_bounce", "possible_racket_contact"]},
+          "frame": {"type": "integer", "minimum": 0},
+          "tolerance_frames": {"type": "integer", "minimum": 0},
+          "actor": {"enum": ["left", "right", "unknown"]}
+        }
+      }
+    },
+    "rackets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["frame", "player_id", "bbox_xyxy", "keypoints_xy", "visibility"],
+        "properties": {
+          "frame": {"type": "integer", "minimum": 0},
+          "player_id": {"enum": ["left", "right"]},
+          "bbox_xyxy": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+          "keypoints_xy": {
+            "description": "Order: top, bottom, handle, left, right",
+            "type": "array", "minItems": 5, "maxItems": 5,
+            "items": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}
+          },
+          "visibility": {"enum": ["visible", "partial", "occluded", "out_of_frame"]}
+        }
+      }
+    }
+  }
+}

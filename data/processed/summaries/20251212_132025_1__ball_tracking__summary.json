@@ -1,0 +1,796 @@
+{
+  "scope": "real-video exploratory projected tracking; not ground truth validation",
+  "video": "data\\raw\\20251212_132025_1.mp4",
+  "difficulty": "easy_candidate",
+  "frames": 290,
+  "duration_s": 9.660295593869732,
+  "timestamp_source": "FALLBACK_frame_index_over_container_fps",
+  "timing_fallback_used": true,
+  "detector_isolated": {
+    "frames_with_candidates": 288,
+    "coverage_pct": 99.3103448275862,
+    "warning": "coverage includes visual distractors and is not track accuracy"
+  },
+  "racketvision_observations": {
+    "balltrack_frames_with_candidates": 268,
+    "raw_frames_with_racket_detections": 264,
+    "raw_racket_instances": 373
+  },
+  "racket_tracks": {
+    "left": {
+      "UNINITIALIZED": 0,
+      "OBSERVED": 171,
+      "PREDICTED": 119,
+      "LOST": 0
+    },
+    "right": {
+      "UNINITIALIZED": 0,
+      "OBSERVED": 173,
+      "PREDICTED": 109,
+      "LOST": 8
+    }
+  },
+  "temporal_constant_velocity": {
+    "state_counts": {
+      "UNINITIALIZED": 3,
+      "OBSERVED": 178,
+      "PREDICTED": 56,
+      "LOST": 53
+    },
+    "track_coverage_pct": 80.6896551724138
+  },
+  "physics_informed_projected": {
+    "state_counts": {
+      "UNINITIALIZED": 3,
+      "OBSERVED": 201,
+      "PREDICTED": 33,
+      "LOST": 53
+    },
+    "observed_frames": 201,
+    "predicted_frames": 33,
+    "track_coverage_pct": 80.6896551724138,
+    "observed_fraction_within_track_pct": 85.8974358974359,
+    "loss_transitions": 18
+  },
+  "multimodal": {
+    "state_counts": {
+      "UNINITIALIZED": 3,
+      "OBSERVED": 246,
+      "PREDICTED": 29,
+      "LOST": 12
+    },
+    "track_coverage_pct": 94.82758620689656,
+    "interaction_mode_counts": {
+      "FREE_FLIGHT": 177,
+      "BOUNCE_PENDING": 35,
+      "CONTACT_PENDING": 12,
+      "POST_EVENT": 66
+    },
+    "offline_smoothing_corrections": 18,
+    "racketvision_source": "data\\processed\\arrays\\20251212_132025_1__racketvision__cache.jsonl",
+    "body_pose_source": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\arrays\\20251212_132025_1__two_players__pose_landmarks.npz"
+  },
+  "ablation": {
+    "baseline_classical_physics": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 201,
+        "PREDICTED": 33,
+        "LOST": 53
+      },
+      "track_coverage_pct": 80.6896551724138,
+      "lost_frames": 53
+    },
+    "balltrack_model": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 224,
+        "PREDICTED": 38,
+        "LOST": 25
+      },
+      "track_coverage_pct": 90.34482758620689,
+      "lost_frames": 25,
+      "smoothing_corrections": 0
+    },
+    "body_context": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 224,
+        "PREDICTED": 38,
+        "LOST": 25
+      },
+      "track_coverage_pct": 90.34482758620689,
+      "lost_frames": 25,
+      "smoothing_corrections": 0
+    },
+    "bounce_hypothesis": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 238,
+        "PREDICTED": 31,
+        "LOST": 18
+      },
+      "track_coverage_pct": 92.75862068965517,
+      "lost_frames": 18,
+      "smoothing_corrections": 13
+    },
+    "racket_priors": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 233,
+        "PREDICTED": 35,
+        "LOST": 19
+      },
+      "track_coverage_pct": 92.41379310344827,
+      "lost_frames": 19,
+      "smoothing_corrections": 13
+    },
+    "full_multimodal": {
+      "state_counts": {
+        "UNINITIALIZED": 3,
+        "OBSERVED": 246,
+        "PREDICTED": 29,
+        "LOST": 12
+      },
+      "track_coverage_pct": 94.82758620689656,
+      "lost_frames": 12,
+      "smoothing_corrections": 18
+    }
+  },
+  "acceptance": {
+    "lost_frame_reduction_pct": 77.35849056603773,
+    "lost_frame_reduction_target_pct": 30,
+    "lost_frame_reduction_pass": true,
+    "annotated_event_recovery_within_2_frames_pct": 100.0,
+    "event_recovery_target_pct": 80,
+    "event_recovery_pass": true,
+    "outside_event_precision_delta_percentage_points": 0.0,
+    "outside_event_precision_pass": true,
+    "common_visible_localization": "unchanged by construction: valid classical observations anchor the multimodal tracker",
+    "racket_player_association_accuracy": "not evaluable until independent five-keypoint racket annotations exist",
+    "racket_finetuning_decision": "deferred; pretrained recall cannot be measured from current annotations"
+  },
+  "events": {
+    "possible_racket_contacts": 8,
+    "possible_table_bounces": 7
+  },
+  "outgoing_strokes": [
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 0.9693722222222222,
+      "frame": 29,
+      "x_px": 1487.5,
+      "y_px": 563.0,
+      "confidence": 0.5670152636850525,
+      "actor": "right",
+      "racket_distance_px": 122.8738652755839,
+      "closing_speed_px_s": 641.5392490458356,
+      "trajectory_velocity_change_px_s": 2518.1254046462805,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 3,
+      "predicted_outgoing_frames": 0,
+      "ball_speed_px_s": 678.990567293963,
+      "direction_image_deg": -26.84729411334935,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 239.52190483705863,
+      "right_elbow_angle_deg": 146.50605790045972,
+      "right_elbow_angular_speed_deg_s": 182.28073982919022
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 1.337065134099617,
+      "frame": 40,
+      "x_px": 472.0,
+      "y_px": 373.5,
+      "confidence": 0.6405450134835965,
+      "actor": "left",
+      "racket_distance_px": 86.68299490619685,
+      "closing_speed_px_s": 1592.6890784184404,
+      "trajectory_velocity_change_px_s": 1763.9186175843786,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 4,
+      "predicted_outgoing_frames": 0,
+      "ball_speed_px_s": 335.2808871350143,
+      "direction_image_deg": -160.4352570618766,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 105.68965302791344,
+      "right_elbow_angle_deg": 136.18673028703228,
+      "right_elbow_angular_speed_deg_s": -191.69306554184664
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 2.5738503831417625,
+      "frame": 77,
+      "x_px": 1235.5,
+      "y_px": 526.5,
+      "confidence": 0.6187309953882891,
+      "actor": "right",
+      "racket_distance_px": 7.958681110459189,
+      "closing_speed_px_s": 696.8152028610193,
+      "trajectory_velocity_change_px_s": 410.73631695561266,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 4,
+      "predicted_outgoing_frames": 0,
+      "ball_speed_px_s": 1828.8156578854127,
+      "direction_image_deg": -171.64232867791165,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 56.16728127320109,
+      "right_elbow_angle_deg": 124.19562759441702,
+      "right_elbow_angular_speed_deg_s": -14.695578578114464
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 3.2089563218390804,
+      "frame": 96,
+      "x_px": 427.5,
+      "y_px": 480.5,
+      "confidence": 0.6755490662931904,
+      "actor": "left",
+      "racket_distance_px": 73.45924162257248,
+      "closing_speed_px_s": 561.2973963576912,
+      "trajectory_velocity_change_px_s": 1843.10075262089,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 4,
+      "predicted_outgoing_frames": 0,
+      "ball_speed_px_s": 2264.606716733706,
+      "direction_image_deg": 2.0440577467611964,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 1328.0906160780548,
+      "right_elbow_angle_deg": 172.79968250833383,
+      "right_elbow_angular_speed_deg_s": -1199.382654925928
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 3.710355747126437,
+      "frame": 111,
+      "x_px": 1403.0,
+      "y_px": 478.5,
+      "confidence": 0.6671371030786596,
+      "actor": "right",
+      "racket_distance_px": 75.47940452449116,
+      "closing_speed_px_s": 1502.4450653064825,
+      "trajectory_velocity_change_px_s": 1851.9716903474625,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 4,
+      "predicted_outgoing_frames": 1,
+      "ball_speed_px_s": 1611.5208436584176,
+      "direction_image_deg": 47.633298446533516,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 410.431351641099,
+      "right_elbow_angle_deg": 96.15277722850674,
+      "right_elbow_angular_speed_deg_s": -157.73668305065394
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 4.646301340996168,
+      "frame": 139,
+      "x_px": 1460.5,
+      "y_px": 485.5,
+      "confidence": 0.6114870069569425,
+      "actor": "right",
+      "racket_distance_px": 78.71605851281625,
+      "closing_speed_px_s": 1522.1715361043366,
+      "trajectory_velocity_change_px_s": 4011.1514145410993,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 4,
+      "predicted_outgoing_frames": 3,
+      "ball_speed_px_s": 1375.110594588455,
+      "direction_image_deg": 48.02337626390625,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 154.34487450212714,
+      "right_elbow_angle_deg": 108.4019704787418,
+      "right_elbow_angular_speed_deg_s": -64.56692147616627
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 5.080847509578544,
+      "frame": 152,
+      "x_px": 504.5,
+      "y_px": 485.0,
+      "confidence": 0.7284186943966254,
+      "actor": "left",
+      "racket_distance_px": 53.48627100571927,
+      "closing_speed_px_s": 1806.882040341565,
+      "trajectory_velocity_change_px_s": 2130.208503955906,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 5,
+      "predicted_outgoing_frames": 0,
+      "ball_speed_px_s": 2169.039995202595,
+      "direction_image_deg": 1.8373427845349966,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 612.377256930426,
+      "right_elbow_angle_deg": 112.43050701054753,
+      "right_elbow_angular_speed_deg_s": -68.58873368599211
+    },
+    {
+      "type": "possible_racket_contact",
+      "timestamp_s": 8.156097318007664,
+      "frame": 244,
+      "x_px": 441.0,
+      "y_px": 418.0,
+      "confidence": 0.8023554920469479,
+      "actor": "left",
+      "racket_distance_px": 25.55459189337524,
+      "closing_speed_px_s": 1000.3952882142419,
+      "trajectory_velocity_change_px_s": 17447.985763248485,
+      "reason": "direction_change_near_associated_racket",
+      "observed_outgoing_frames": 3,
+      "predicted_outgoing_frames": 3,
+      "ball_speed_px_s": 3436.0759006773274,
+      "direction_image_deg": -7.001267557495356,
+      "speed_units": "px/s; no calibrated metric 3D",
+      "effective_spin": "spin_not_identifiable",
+      "right_wrist_speed_px_s": 270.73033826772075,
+      "right_elbow_angle_deg": 62.81823719572566,
+      "right_elbow_angular_speed_deg_s": 326.77838170002724
+    }
+  ],
+  "manual_validation": {
+    "available": true,
+    "reference": "data\\annotations\\ball_tracking_20251212_132025_1.json",
+    "methods": {
+      "isolated": {
+        "annotated_points": 25,
+        "available_points": 25,
+        "coverage_pct": 100.0,
+        "median_error_px": 0.0,
+        "p95_error_px": 825.8901479993634,
+        "max_error_px": 966.5373764112799,
+        "rmse_px": 282.0848453923039,
+        "within_25px": 20,
+        "observed_points": 25,
+        "predicted_points": 0,
+        "predicted_median_error_px": null,
+        "missed_frames": [],
+        "observable_false_positive_frames": [
+          97,
+          98,
+          108,
+          215
+        ],
+        "precision_in_annotated_points": 0.84,
+        "recall_in_annotated_points": 0.84,
+        "f1_in_annotated_points": 0.84,
+        "by_visibility": {
+          "visible": {
+            "points": 3,
+            "true_positive": 2,
+            "available": 3,
+            "precision": 0.6666666666666666,
+            "recall": 0.6666666666666666,
+            "f1": 0.6666666666666666
+          },
+          "blurred": {
+            "points": 21,
+            "true_positive": 19,
+            "available": 21,
+            "precision": 0.9047619047619048,
+            "recall": 0.9047619047619048,
+            "f1": 0.9047619047619048
+          },
+          "occluded": {
+            "points": 1,
+            "true_positive": 0,
+            "available": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0
+          },
+          "out_of_frame": {
+            "points": 0,
+            "true_positive": 0,
+            "available": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0
+          }
+        },
+        "outside_event_windows": {
+          "points": 7,
+          "true_positive": 7,
+          "available": 7,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "temporal": {
+        "annotated_points": 25,
+        "available_points": 23,
+        "coverage_pct": 92.0,
+        "median_error_px": 162.82582718966916,
+        "p95_error_px": 1378.9473959605377,
+        "max_error_px": 1491.1882845569837,
+        "rmse_px": 679.7623890456248,
+        "within_25px": 11,
+        "observed_points": 17,
+        "predicted_points": 6,
+        "predicted_median_error_px": 638.8223515075771,
+        "missed_frames": [
+          108,
+          109
+        ],
+        "observable_false_positive_frames": [
+          98,
+          99,
+          100,
+          102,
+          104,
+          106,
+          208,
+          210,
+          212,
+          213,
+          214,
+          215
+        ],
+        "precision_in_annotated_points": 0.4782608695652174,
+        "recall_in_annotated_points": 0.44,
+        "f1_in_annotated_points": 0.4583333333333333,
+        "by_visibility": {
+          "visible": {
+            "points": 3,
+            "true_positive": 1,
+            "available": 3,
+            "precision": 0.3333333333333333,
+            "recall": 0.3333333333333333,
+            "f1": 0.3333333333333333
+          },
+          "blurred": {
+            "points": 21,
+            "true_positive": 9,
+            "available": 19,
+            "precision": 0.47368421052631576,
+            "recall": 0.42857142857142855,
+            "f1": 0.45
+          },
+          "occluded": {
+            "points": 1,
+            "true_positive": 1,
+            "available": 1,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "out_of_frame": {
+            "points": 0,
+            "true_positive": 0,
+            "available": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0
+          }
+        },
+        "outside_event_windows": {
+          "points": 7,
+          "true_positive": 2,
+          "available": 7,
+          "precision": 0.2857142857142857,
+          "recall": 0.2857142857142857,
+          "f1": 0.2857142857142857
+        }
+      },
+      "physical": {
+        "annotated_points": 25,
+        "available_points": 22,
+        "coverage_pct": 88.0,
+        "median_error_px": 0.0,
+        "p95_error_px": 0.0,
+        "max_error_px": 37.540577804470495,
+        "rmse_px": 8.00367808031664,
+        "within_25px": 21,
+        "observed_points": 21,
+        "predicted_points": 1,
+        "predicted_median_error_px": 37.540577804470495,
+        "missed_frames": [
+          97,
+          98,
+          99
+        ],
+        "observable_false_positive_frames": [],
+        "precision_in_annotated_points": 1.0,
+        "recall_in_annotated_points": 0.88,
+        "f1_in_annotated_points": 0.9361702127659575,
+        "by_visibility": {
+          "visible": {
+            "points": 3,
+            "true_positive": 3,
+            "available": 3,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "blurred": {
+            "points": 21,
+            "true_positive": 19,
+            "available": 19,
+            "precision": 1.0,
+            "recall": 0.9047619047619048,
+            "f1": 0.9500000000000001
+          },
+          "occluded": {
+            "points": 1,
+            "true_positive": 0,
+            "available": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0
+          },
+          "out_of_frame": {
+            "points": 0,
+            "true_positive": 0,
+            "available": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0
+          }
+        },
+        "outside_event_windows": {
+          "points": 7,
+          "true_positive": 7,
+          "available": 7,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "multimodal": {
+        "annotated_points": 25,
+        "available_points": 25,
+        "coverage_pct": 100.0,
+        "median_error_px": 0.0,
+        "p95_error_px": 81.32017713110902,
+        "max_error_px": 102.28514066080176,
+        "rmse_px": 29.124130888320085,
+        "within_25px": 22,
+        "observed_points": 24,
+        "predicted_points": 1,
+        "predicted_median_error_px": 54.87371866385583,
+        "missed_frames": [],
+        "observable_false_positive_frames": [
+          97,
+          99,
+          214
+        ],
+        "precision_in_annotated_points": 0.88,
+        "recall_in_annotated_points": 0.88,
+        "f1_in_annotated_points": 0.88,
+        "by_visibility": {
+          "visible": {
+            "points": 3,
+            "true_positive": 2,
+            "available": 3,
+            "precision": 0.6666666666666666,
+            "recall": 0.6666666666666666,
+            "f1": 0.6666666666666666
+          },
+          "blurred": {
+            "points": 21,
+            "true_positive": 20,
+            "available": 21,
+            "precision": 0.9523809523809523,
+            "recall": 0.9523809523809523,
+            "f1": 0.9523809523809523
+          },
+          "occluded": {
+            "points": 1,
+            "true_positive": 0,
+            "available": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0
+          },
+          "out_of_frame": {
+            "points": 0,
+            "true_positive": 0,
+            "available": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0
+          }
+        },
+        "outside_event_windows": {
+          "points": 7,
+          "true_positive": 7,
+          "available": 7,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    "events": [
+      {
+        "type": "possible_table_bounce",
+        "frame": 89,
+        "tolerance_frames": 2,
+        "confidence": "manual_probable",
+        "detected": true,
+        "detected_frame": 89,
+        "multimodal_recovered_within_2_frames": true,
+        "recovery_offset_frames": 0
+      },
+      {
+        "type": "possible_racket_contact",
+        "frame": 96,
+        "tolerance_frames": 2,
+        "actor": "main_player",
+        "confidence": "manual_probable",
+        "detected": true,
+        "detected_frame": 96,
+        "multimodal_recovered_within_2_frames": true,
+        "recovery_offset_frames": 0
+      },
+      {
+        "type": "possible_table_bounce",
+        "frame": 108,
+        "tolerance_frames": 2,
+        "confidence": "manual_probable",
+        "detected": true,
+        "detected_frame": 108,
+        "multimodal_recovered_within_2_frames": true,
+        "recovery_offset_frames": 0
+      },
+      {
+        "type": "possible_racket_contact",
+        "frame": 214,
+        "tolerance_frames": 3,
+        "actor": "opponent",
+        "confidence": "manual_uncertain",
+        "detected": false,
+        "detected_frame": null,
+        "multimodal_recovered_within_2_frames": true,
+        "recovery_offset_frames": 0
+      }
+    ],
+    "event_recovery_within_2_frames_pct": 100.0,
+    "event_precision": "not estimable from sparse non-exhaustive event annotations",
+    "warning": "sparse approximate subset; detector centroids were visually accepted/corrected, so localization error is optimistic and not independent"
+  },
+  "flight_model_comparison": {
+    "available": true,
+    "segments": [
+      {
+        "name": "incoming_before_bounce",
+        "training_frames": [
+          82,
+          84,
+          86
+        ],
+        "held_out_frames": [
+          88
+        ],
+        "held_out_rmse_px": {
+          "gravity_only": 5.846892533006839,
+          "gravity_plus_drag": 3.6139254458276073,
+          "magnus_minus_200_rad_s": 11.311796557453238,
+          "magnus_plus_200_rad_s": 4.947222230212065
+        },
+        "best_grid_model": "gravity_plus_drag"
+      },
+      {
+        "name": "after_bounce_before_main_contact",
+        "training_frames": [
+          90,
+          92,
+          94
+        ],
+        "held_out_frames": [
+          96
+        ],
+        "held_out_rmse_px": {
+          "gravity_only": 2.9738546198483085,
+          "gravity_plus_drag": 3.4686203350189246,
+          "magnus_minus_200_rad_s": 2.383594854603637,
+          "magnus_plus_200_rad_s": 6.934028998275815
+        },
+        "best_grid_model": "magnus_minus_200_rad_s"
+      },
+      {
+        "name": "outgoing_after_main_contact",
+        "training_frames": [
+          100,
+          102,
+          104
+        ],
+        "held_out_frames": [
+          106
+        ],
+        "held_out_rmse_px": {
+          "gravity_only": 24.23021469595372,
+          "gravity_plus_drag": 12.66767520962928,
+          "magnus_minus_200_rad_s": 28.011086574602484,
+          "magnus_plus_200_rad_s": 5.537308849992288
+        },
+        "best_grid_model": "magnus_plus_200_rad_s"
+      },
+      {
+        "name": "toward_opponent",
+        "training_frames": [
+          208,
+          210,
+          212
+        ],
+        "held_out_frames": [
+          213
+        ],
+        "held_out_rmse_px": {
+          "gravity_only": 8.109011605529897,
+          "gravity_plus_drag": 3.9100826583509263,
+          "magnus_minus_200_rad_s": 10.70036282049194,
+          "magnus_plus_200_rad_s": 3.1949516917394454
+        },
+        "best_grid_model": "magnus_plus_200_rad_s"
+      }
+    ],
+    "magnus_grid_wins": 3,
+    "segments_evaluated": 4,
+    "conclusion": "spin_not_identifiable",
+    "reason": "approximate monocular plane, few held-out points, fixed coarse spin grid, and no stable independently calibrated improvement"
+  },
+  "player_kinematics_source": "C:\\Users\\User\\Documents\\ChatGPT\\MoCap_Motion_lab\\MoCap_Motion_Lab\\data\\processed\\arrays\\20251212_132025_1__two_players__pose_landmarks.npz",
+  "geometry": {
+    "table_corners_px": [
+      [
+        563.66,
+        529.37
+      ],
+      [
+        1195.89,
+        529.37
+      ],
+      [
+        1437.26,
+        543.09
+      ],
+      [
+        563.66,
+        549.94
+      ]
+    ],
+    "net_polygon_px": [
+      [
+        902.4,
+        493.71
+      ],
+      [
+        1013.49,
+        501.94
+      ],
+      [
+        1012.11,
+        554.06
+      ],
+      [
+        899.66,
+        530.74
+      ]
+    ],
+    "source": "data\\annotations\\table_geometry\\20251212_132025_1__table_geometry.json",
+    "table_length_m_prior": 2.74,
+    "pixels_per_m_vertical_prior": 250.0,
+    "status": "manual fixed-camera surface and net annotation"
+  },
+  "identifiability": {
+    "ball_speed_px_s": "estimated when >=2 post-contact observations",
+    "metric_ball_speed_m_s": "not identifiable from current monocular approximate calibration",
+    "spin": "spin_not_identifiable",
+    "magnus_used": false
+  },
+  "limitations": [
+    "candidate coverage is not precision",
+    "table geometry remains approximate until its annotation JSON is manually confirmed",
+    "single view does not recover depth",
+    "30 fps undersamples fast ball flight",
+    "events are hypotheses, not verified contacts",
+    "foreground includes moving players",
+    "racket wrist-forearm proxies are explicitly lower confidence than RacketVision detections"
+  ]
+}
